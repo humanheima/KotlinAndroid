@@ -1,10 +1,64 @@
 package com.hm.dumingwei.kotlinandroid
 
 import android.app.Activity
+import android.graphics.drawable.Drawable
+import android.support.annotation.ColorInt
 import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import com.bumptech.glide.request.RequestOptions
 
+/**
+ * Toast的封装
+ */
+fun Toast.setGravityCenter(): Toast {
+    setGravity(Gravity.CENTER, 0, 0)
+    return this
+}
+
+/**
+ * 设置Toast字体及背景颜色
+ * @param messageColor
+ * @param backgroundColor
+ * @return
+ */
+fun Toast.setToastColor(@ColorInt messageColor: Int, @ColorInt backgroundColor: Int) {
+
+    val view = view
+    if (view != null) {
+        val message = view.findViewById(android.R.id.message) as TextView
+        message.setBackgroundColor(backgroundColor)
+        message.setTextColor(messageColor)
+    }
+}
+
+
+/**
+ * Glide 的封装
+ */
+fun ImageView.load(url: String?, placeholderRes: Int = R.drawable.ic_launcher_background, errorRes: Int = R.drawable.ic_launcher_background) {
+    get(url).placeholder(placeholderRes)
+            .error(errorRes)
+            .into(this)
+}
+
+fun ImageView.loadRound(url: String?, centerCrop: Boolean = false) {
+    get(url).placeholder(R.drawable.ic_launcher_background)
+            .transform(GlideRoundTransform(12))
+            .into(this)
+}
+
+fun ImageView.loadCircle(url: String?) {
+    get(url).placeholder(R.drawable.ic_launcher_background)
+            .apply(RequestOptions.circleCropTransform())
+            .into(this)
+}
+
+fun ImageView.get(url: String?): GlideRequest<Drawable> = GlideApp.with(context).load(url)
+fun ImageView.get(drawable: Drawable?): GlideRequest<Drawable> = GlideApp.with(context).load(drawable)
 
 /***
  * 设置延迟时间的View扩展

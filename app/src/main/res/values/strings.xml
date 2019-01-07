@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">KotlinAndroid</string>
     <string name="kotlin_prevent_repeat_click">kotlin利用扩展函数实现防止重复点击</string>
+    <string name="retrofit">Retrofit</string>
 </resources>

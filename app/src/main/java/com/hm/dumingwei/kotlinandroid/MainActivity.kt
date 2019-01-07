@@ -4,6 +4,8 @@ import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.hm.dumingwei.kotlinandroid.handbook.eleven.SecondActivity
+import com.hm.dumingwei.kotlinandroid.handbook.thirteen.GithubEventActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -13,8 +15,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        btn_prevent_click.withTrigger().click {
-            toastSHortly("prevent repeat click")
+        btnRetrofit.withTrigger().click {
+            GithubEventActivity.launch(this)
+        }
+        btnPreventClick.withTrigger().click {
+            //toastSHortly("prevent repeat click")
+            SecondActivity.launch(this, "dumingwei", 27)
         }
     }
 
@@ -66,8 +72,6 @@ class MainActivity : AppCompatActivity() {
                         } else {
                             //没有获取权限
                         }
-
-
                     }
         })
 
