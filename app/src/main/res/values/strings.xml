@@ -2,4 +2,8 @@
     <string name="app_name">KotlinAndroid</string>
     <string name="kotlin_prevent_repeat_click">kotlin利用扩展函数实现防止重复点击</string>
     <string name="retrofit">Retrofit</string>
+    <string name="connect_exception_error">连接错误</string>
+    <string name="timeout_error">超时错误</string>
+    <string name="network_error">网络错误</string>
+    <string name="something_went_wrong">未知错误</string>
 </resources>
