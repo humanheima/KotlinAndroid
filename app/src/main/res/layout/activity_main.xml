@@ -7,10 +7,18 @@
     tools:context=".MainActivity">
 
     <Button
+        android:id="@+id/btnTestWidget"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="测试在父类中使用子类布局中声明的控件"
+        android:textAllCaps="false" />
+
+    <Button
         android:id="@+id/btnRetrofit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/retrofit" />
+        android:text="@string/retrofit"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnPreventClick"
