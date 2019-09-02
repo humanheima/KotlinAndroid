@@ -27,6 +27,10 @@ class MainActivity : AppCompatActivity() {
         btnTestWidget.setOnClickListener {
             FirstWidgetActivity.launch(this)
         }
+
+        btnCoroutineRequest.setOnClickListener {
+            CoroutineActivity.launch(this)
+        }
     }
 
     fun checkPermission() {

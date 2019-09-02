@@ -10,6 +10,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.request.RequestOptions
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * Toast的封装
@@ -133,4 +139,29 @@ fun Activity.toastSHortly(message: String) {
 
 fun Activity.toastSHortly(messageId: Int) {
     Toast.makeText(this, getString(messageId), Toast.LENGTH_SHORT).show()
+}
+
+
+/**
+ * retrofit2.Call的扩展函数
+ */
+suspend fun <T : Any?> Call<T>.await(): T {
+
+    return suspendCoroutine {
+        enqueue(object : Callback<T> {
+            override fun onFailure(call: Call<T>, t: Throwable) {
+                it.resumeWithException(t)
+            }
+
+            override fun onResponse(call: Call<T>, response: Response<T>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { body ->
+                        it.resume(body)
+                    }
+                } else {
+                    it.resumeWithException(Throwable(response.toString()))
+                }
+            }
+        })
+    }
 }

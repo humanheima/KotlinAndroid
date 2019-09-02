@@ -30,19 +30,26 @@ abstract class BaseMaybeObserver<T> : DisposableMaybeObserver<T>() {
 
     abstract fun onMaybeSuccess(data: T)
 
+    open fun onMaybeError(msg: String?) {
+
+        // do nothing
+    }
+
     override fun onError(e: Throwable) {
         var message = e.message
         Log.d(TAG, "onError: ")
-        when (e) { // 枚举各种网络异常
-            is ConnectException -> message = mAppContext.getString(R.string.connect_exception_error)
-            is SocketTimeoutException -> message = mAppContext.getString(R.string.timeout_error)
-            is UnknownHostException -> message = mAppContext.getString(R.string.network_error)
-            is NetworkErrorException -> message = mAppContext.getString(R.string.network_error)
-            else -> message = mAppContext.getString(R.string.something_went_wrong)
+        message = when (e) { // 枚举各种网络异常
+            is ConnectException -> mAppContext.getString(R.string.connect_exception_error)
+            is SocketTimeoutException -> mAppContext.getString(R.string.timeout_error)
+            is UnknownHostException -> mAppContext.getString(R.string.network_error)
+            is NetworkErrorException -> mAppContext.getString(R.string.network_error)
+            else -> mAppContext.getString(R.string.something_went_wrong)
         }
+        onMaybeError(message)
     }
 
     override fun onComplete() {
+        // do nothing
     }
 
 }

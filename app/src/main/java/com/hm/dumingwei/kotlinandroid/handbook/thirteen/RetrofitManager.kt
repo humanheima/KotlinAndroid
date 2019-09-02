@@ -29,6 +29,8 @@ class RetrofitManager private constructor() {
 
     private val adService: ADService
 
+    private val coroutineAPIService: CoroutineAPIService
+
     private val okhttpClient: OkHttpClient
 
     init {
@@ -49,6 +51,8 @@ class RetrofitManager private constructor() {
         apiService = mRetrofit.create(APIService::class.java)
 
         adService = mRetrofit.create(ADService::class.java)
+
+        coroutineAPIService = mRetrofit.create(CoroutineAPIService::class.java)
     }
 
     fun retrofit(): Retrofit = mRetrofit
@@ -57,6 +61,8 @@ class RetrofitManager private constructor() {
 
     // 新增的 adService() 用于调用 ADService 中的接口
     fun adService(): ADService = adService
+
+    fun coroutineAPIService() = coroutineAPIService
 
     fun okhttpClient(): OkHttpClient = okhttpClient
 

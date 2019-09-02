@@ -26,4 +26,12 @@
         android:layout_height="wrap_content"
         android:text="@string/kotlin_prevent_repeat_click" />
 
+    <!--使用Coroutine做-->
+    <Button
+        android:id="@+id/btnCoroutineRequest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="使用Coroutine请求网络"
+        android:textAllCaps="false" />
+
 </LinearLayout>

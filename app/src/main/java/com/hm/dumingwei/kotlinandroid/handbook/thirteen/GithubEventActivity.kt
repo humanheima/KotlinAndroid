@@ -40,12 +40,15 @@ class GithubEventActivity : AppCompatActivity() {
                     }
 
                     override fun onComplete() {
+                        //do nothing
                     }
 
                     override fun onSubscribe(d: Disposable) {
+                        //do nothing
                     }
 
                     override fun onError(e: Throwable) {
+                        //do nothing
                     }
 
                 })
@@ -82,6 +85,10 @@ class GithubEventActivity : AppCompatActivity() {
                 .subscribe(object : BaseMaybeObserver<List<Event>>() {
                     override fun onMaybeSuccess(data: List<Event>) {
 
+                    }
+
+                    override fun onMaybeError(msg: String?) {
+                        super.onMaybeError(msg)
                     }
                 })
     }
