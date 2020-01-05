@@ -28,9 +28,14 @@ class MainActivity : AppCompatActivity() {
             FirstWidgetActivity.launch(this)
         }
 
-        btnCoroutineRequest.setOnClickListener {
+        /*btnCoroutineRequest.setOnClickListener {
+            CoroutineActivity.launch(this)
+        }*/
+
+        btnCoroutineRequest.onClick {
             CoroutineActivity.launch(this)
         }
+
     }
 
     fun checkPermission() {

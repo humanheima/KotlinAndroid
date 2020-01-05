@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.hm.dumingwei.kotlinandroid.handbook.thirteen.Event
 import com.hm.dumingwei.kotlinandroid.handbook.thirteen.RetrofitManager
+import kotlinx.android.synthetic.main.activity_coroutine.*
 import kotlinx.coroutines.*
 import retrofit2.Response
 import kotlin.coroutines.CoroutineContext
@@ -38,9 +39,25 @@ class CoroutineActivity : AppCompatActivity(), CoroutineScope {
         job = Job()
 
         getPublicEvent()
-        getPublicEvent1()
-        getPublicEvent2()
-        getPublicEvent3()
+        //getPublicEvent1()
+        //getPublicEvent2()
+        //getPublicEvent3()
+        Log.d(TAG, "onCreate: ")
+        /*launch {
+            Log.d(TAG, "onCreate: 开始执行挂起函数")
+
+            //执行挂起函数
+            val events: List<Event> = RetrofitManager.get()
+                    .coroutineAPIService()
+                    .getPublicEventSuspend("humanheima")
+
+            Log.d(TAG, "onCreate: 挂起函数执行完毕后恢复协程，继续向下执行")
+
+            Log.d(TAG, "onCreate success: ${events.size}")
+
+        }
+
+        Log.d(TAG, "onCreate: 线程继续向下执行")*/
     }
 
     override val coroutineContext: CoroutineContext
@@ -60,12 +77,20 @@ class CoroutineActivity : AppCompatActivity(), CoroutineScope {
 
     private fun getPublicEvent() {
         launch {
-            val events: List<Event> = RetrofitManager.get()
-                    .coroutineAPIService()
-                    .publicEvent("humanheima").await()
+            Log.d(TAG, "getPublicEvent: current thread ${Thread.currentThread().name}")
+            try {
+                //网络请求，并不会阻塞主线程
+                val events: List<Event> = RetrofitManager.get()
+                        .coroutineAPIService()
+                        .publicEvent("humanheima").await()
 
-            for(event in events){
-                Log.d(TAG, "getPublicEvent success: ${event.actor?.url}")
+                val builder = StringBuilder()
+                for (event in events) {
+                    builder.append("${event.actor?.url}\n")
+                }
+                tvResult.text = builder.toString()
+            } catch (e: Exception) {
+                Log.d(TAG, "getPublicEvent: ${e.message}")
             }
         }
     }
@@ -98,9 +123,12 @@ class CoroutineActivity : AppCompatActivity(), CoroutineScope {
 
     private fun getPublicEvent2() {
         launch {
+            Log.d(TAG, "getPublicEvent2: 开始执行挂起函数")
+
             val events: List<Event> = RetrofitManager.get()
                     .coroutineAPIService()
                     .getPublicEventSuspend("humanheima")
+            Log.d(TAG, "getPublicEvent2: 挂起函数执行完毕后恢复协程，继续向下执行")
             Log.d(TAG, "getPublicEvent2 success: ${events.size}")
         }
     }

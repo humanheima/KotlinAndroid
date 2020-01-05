@@ -2,6 +2,7 @@ package com.hm.dumingwei.kotlinandroid.testbase
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_first_widget.*
 
@@ -28,5 +29,15 @@ abstract class BaseWidgetActivity : AppCompatActivity() {
                 Toast.makeText(this, "SecondWidgetActivity", Toast.LENGTH_SHORT).show()
             }
         }
+
+        val clickListener = View.OnClickListener {
+
+        }
+
+        val clicklistener1 = object : View.OnClickListener {
+            override fun onClick(v: View?) {
+            }
+        }
     }
+
 }

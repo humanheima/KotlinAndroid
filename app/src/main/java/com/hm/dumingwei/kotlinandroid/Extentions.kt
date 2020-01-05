@@ -10,6 +10,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.request.RequestOptions
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.actor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,6 +26,15 @@ fun Toast.setGravityCenter(): Toast {
     setGravity(Gravity.CENTER, 0, 0)
     return this
 }
+
+fun Activity.toastSHortly(message: String) {
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+}
+
+fun Activity.toastSHortly(messageId: Int) {
+    Toast.makeText(this, getString(messageId), Toast.LENGTH_SHORT).show()
+}
+
 
 /**
  * 设置Toast字体及背景颜色
@@ -133,14 +144,32 @@ private fun <T : View> T.clickEnable(): Boolean {
 }
 
 
-fun Activity.toastSHortly(message: String) {
-    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+/**
+ * 使用协程，实现防止View重复点击
+ */
+
+interface JobHolder {
+    val job: Job
 }
 
-fun Activity.toastSHortly(messageId: Int) {
-    Toast.makeText(this, getString(messageId), Toast.LENGTH_SHORT).show()
-}
+val View.contextJob: Job
+    get() = (context as? JobHolder)?.job ?: NonCancellable
 
+fun View.onClick(time: Long = 600, action: suspend (View) -> Unit) {
+
+    val eventActor = GlobalScope.actor<Unit>(contextJob + Dispatchers.Main) {
+
+        for (event in channel) {
+            delay(time)
+            action(this@onClick)
+        }
+
+    }
+
+    setOnClickListener {
+        eventActor.offer(Unit)
+    }
+}
 
 /**
  * retrofit2.Call的扩展函数
