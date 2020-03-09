@@ -4,9 +4,19 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import android.view.View
 import com.hm.dumingwei.kotlinandroid.R
+import kotlinx.coroutines.*
 
+/**
+ * Crete by dumingwei on 2020-01-05
+ * Desc:
+ *
+ */
 class CoroutineBaseActivity : AppCompatActivity() {
+
+    private val TAG = "CoroutineBaseActivity"
 
     companion object {
 
@@ -19,5 +29,53 @@ class CoroutineBaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_coroutine_base)
+        //test0()
+    }
+
+    public fun onClick(view: View) {
+        when (view.id) {
+            R.id.btnTest1 -> {
+                test1()
+            }
+            R.id.btnTest2 -> {
+                test2()
+            }
+        }
+    }
+
+    private fun test0() {
+        GlobalScope.launch(block = {
+            delay(1000L)
+            Log.d(TAG, "test0: Hello,World!")
+        })
+    }
+
+    /**
+     * 这个例子说明了协程中的代码自动地切换到其他线程之后又自动地切换回了主线程！
+     */
+    private fun test1() {
+        Log.d(TAG, "test1: start ${Thread.currentThread().name}")
+        GlobalScope.launch(Dispatchers.Main) {
+            delay(1000L)
+            Log.d(TAG, "test1: Hello,World! ${Thread.currentThread().name}")
+
+        }
+        Log.d(TAG, "test1: end ${Thread.currentThread().name}")
+    }
+
+    private fun test2() {
+        GlobalScope.launch(Dispatchers.Main) {
+            Log.d(TAG, "Hello ${Thread.currentThread().name}")
+            test()
+            Log.d(TAG, "End ${Thread.currentThread().name}")
+
+        }
+
+    }
+
+    private suspend fun test() {
+        withContext(Dispatchers.IO) {
+            Log.d(TAG, "World ${Thread.currentThread().name}")
+        }
     }
 }

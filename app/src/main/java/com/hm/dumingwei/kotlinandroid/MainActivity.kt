@@ -4,9 +4,11 @@ import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.hm.dumingwei.kotlinandroid.findviewbyid.FindViewByIdActivity
 import com.hm.dumingwei.kotlinandroid.handbook.eleven.SecondActivity
 import com.hm.dumingwei.kotlinandroid.handbook.thirteen.GithubEventActivity
 import com.hm.dumingwei.kotlinandroid.testbase.FirstWidgetActivity
+import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.CoroutineBaseActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -32,8 +34,15 @@ class MainActivity : AppCompatActivity() {
             CoroutineActivity.launch(this)
         }*/
 
+        btnBaseCoroutine.onClick {
+            CoroutineBaseActivity.launch(this)
+        }
         btnCoroutineRequest.onClick {
             CoroutineActivity.launch(this)
+        }
+
+        btnFindViewById.setOnClickListener {
+            FindViewByIdActivity.launch(this)
         }
 
     }

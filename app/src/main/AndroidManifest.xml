@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".testbase.SecondWidgetActivity"></activity>
+        <activity android:name=".findviewbyid.FindViewByIdActivity"></activity>
+        <activity android:name=".testbase.SecondWidgetActivity" />
         <activity android:name=".testbase.FirstWidgetActivity" />
         <activity android:name=".CoroutineActivity" />
         <activity android:name=".MainActivity">
@@ -23,6 +24,7 @@
         </activity>
         <activity android:name=".handbook.eleven.SecondActivity" />
         <activity android:name=".handbook.thirteen.GithubEventActivity" />
+        <activity android:name=".tutorial.coroutine.CoroutineBaseActivity" />
     </application>
 
 </manifest>

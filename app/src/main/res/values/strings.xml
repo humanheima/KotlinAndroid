@@ -6,4 +6,8 @@
     <string name="timeout_error">超时错误</string>
     <string name="network_error">网络错误</string>
     <string name="something_went_wrong">未知错误</string>
+    <string name="coroutine_base">协程基础</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
