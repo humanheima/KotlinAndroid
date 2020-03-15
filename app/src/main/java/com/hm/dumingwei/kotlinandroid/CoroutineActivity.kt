@@ -38,6 +38,9 @@ class CoroutineActivity : AppCompatActivity(), CoroutineScope {
         setContentView(R.layout.activity_coroutine)
         job = Job()
 
+        if(this::job.isInitialized){
+
+        }
         getPublicEvent()
         //getPublicEvent1()
         //getPublicEvent2()

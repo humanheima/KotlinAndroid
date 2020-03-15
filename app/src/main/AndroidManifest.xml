@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".findviewbyid.FindViewByIdActivity"></activity>
+        <activity android:name=".lazy_init.LazyInitActivity"></activity>
+        <activity android:name=".findviewbyid.FindViewByIdActivity" />
         <activity android:name=".testbase.SecondWidgetActivity" />
         <activity android:name=".testbase.FirstWidgetActivity" />
         <activity android:name=".CoroutineActivity" />
