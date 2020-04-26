@@ -7,6 +7,13 @@
     tools:context=".MainActivity">
 
     <Button
+        android:id="@+id/btnException"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="测试在协程中的异常处理"
+        android:textAllCaps="false" />
+
+    <Button
         android:id="@+id/btnTestWidget"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

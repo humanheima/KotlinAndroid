@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".tutorial.coroutine.CoroutineExceptionActivity">
+
+    <Button
+        android:id="@+id/btnTest1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="test1抓不住异常" />
+
+    <Button
+        android:id="@+id/btnTest2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="test2抓不住异常" />
+
+    <Button
+        android:id="@+id/btnTest3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="test3抓不住异常" />
+
+    <Button
+        android:id="@+id/btnTest4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="test4可以抓住异常" />
+
+</LinearLayout>

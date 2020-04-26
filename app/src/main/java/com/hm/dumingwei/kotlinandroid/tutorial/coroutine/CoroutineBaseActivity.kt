@@ -78,4 +78,30 @@ class CoroutineBaseActivity : AppCompatActivity() {
             Log.d(TAG, "World ${Thread.currentThread().name}")
         }
     }
+
+    /**
+     * coroutineScope 和 supervisorScope的区别
+     */
+    private suspend fun testScope() {
+        coroutineScope {
+
+        }
+
+        supervisorScope {
+
+        }
+    }
+
+    suspend fun loadLots(){
+        coroutineScope {
+            repeat(1_000){
+                launch {
+                    //Log.d(TAG, "loadLots: ")
+                    //todo network
+                    //fetchDocs()
+                }
+            }
+        }
+
+    }
 }

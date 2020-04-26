@@ -9,6 +9,7 @@ import com.hm.dumingwei.kotlinandroid.handbook.eleven.SecondActivity
 import com.hm.dumingwei.kotlinandroid.handbook.thirteen.GithubEventActivity
 import com.hm.dumingwei.kotlinandroid.testbase.FirstWidgetActivity
 import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.CoroutineBaseActivity
+import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.CoroutineExceptionActivity
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -17,6 +18,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        btnException.setOnClickListener {
+            CoroutineExceptionActivity.launch(this)
+        }
 
         btnRetrofit.withTrigger().click {
             GithubEventActivity.launch(this)

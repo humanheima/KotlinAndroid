@@ -172,7 +172,7 @@ fun View.onClick(time: Long = 600, action: suspend (View) -> Unit) {
 }
 
 /**
- * retrofit2.Call的扩展函数
+ * 扩展Retrofit.Call类，为其扩展一个await方法，并标识为挂起函数
  */
 suspend fun <T : Any?> Call<T>.await(): T {
 
@@ -184,9 +184,13 @@ suspend fun <T : Any?> Call<T>.await(): T {
 
             override fun onResponse(call: Call<T>, response: Response<T>) {
                 if (response.isSuccessful) {
-                    response.body()?.let { body ->
+                    val body = response.body()
+                    if (body != null) {
                         it.resume(body)
+                    } else {
+                        it.resumeWithException(Throwable(response.toString()))
                     }
+
                 } else {
                     it.resumeWithException(Throwable(response.toString()))
                 }
