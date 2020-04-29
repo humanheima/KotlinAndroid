@@ -15,6 +15,7 @@ import kotlinx.coroutines.channels.actor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -194,6 +195,21 @@ suspend fun <T : Any?> Call<T>.await(): T {
                 } else {
                     it.resumeWithException(Throwable(response.toString()))
                 }
+            }
+        })
+    }
+}
+
+suspend fun okhttp3.Call.await(): okhttp3.Response {
+
+    return suspendCoroutine {
+        enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                it.resumeWithException(e)
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                it.resume(response)
             }
         })
     }

@@ -27,13 +27,17 @@ class CoroutinePresenter(scope: CoroutineScope?) : BaseNetPresenter<CoroutineVie
         scope?.launch {
             try {
                 //网络请求，并不会阻塞主线程
-                val events: List<Event> = coroutineAPIService
-                        .publicEvent("humanheima").await()
+                val events: List<Event> = coroutineAPIService.publicEvent("humanheima").await()
+                val events2: List<Event> = coroutineAPIService.publicEvent("humanheima").await()
 
                 val builder = StringBuilder()
                 for (event in events) {
-                    builder.append("${event.actor?.url}\n")
+                    builder.append("event1 ${event.actor?.url}\n")
                 }
+                for (event in events2) {
+                    builder.append("event2 ${event.actor?.url}\n")
+                }
+
                 view?.let {
                     if (it.canUpdateUI()) {
                         it.setResult(builder.toString())
@@ -47,29 +51,41 @@ class CoroutinePresenter(scope: CoroutineScope?) : BaseNetPresenter<CoroutineVie
     }
 
     fun getPublicEvent2() {
-        val handler = CoroutineExceptionHandler { _, exception ->
+        /*val handler = CoroutineExceptionHandler { _, exception ->
             Log.d(TAG, "getPublicEvent2: Caught original $exception")
-        }
+        }*/
 
-        scope?.launch(handler) {
+        scope?.launch {
             try {
-                val one: Deferred<List<Event>> = async { coroutineAPIService.publicEvent("humanheima").await() }
-                val two = async { coroutineAPIService.publicEvent("humanheima").await() }
 
-                val combine: MutableList<Event> = arrayListOf()
-
-                val oneResult: List<Event> = one.await()
-                val twoResult = two.await()
-
-                combine.addAll(oneResult)
-                combine.addAll(twoResult)
-
-                view?.let {
-                    if (it.canUpdateUI()) {
-                        it.setResult("getPublicEvent2: ${combine.size}")
+                /**
+                 * 注意，使用async的时候一定要重新指定协程上下文
+                 */
+                withContext(Dispatchers.Main) {
+                    val one: Deferred<List<Event>> = async {
+                        Log.d(TAG, "getPublicEvent2: async1 ${Thread.currentThread().name}")
+                        coroutineAPIService.publicEvent("humanheima").await()
                     }
+                    val two = async {
+                        Log.d(TAG, "getPublicEvent2: async2 ${Thread.currentThread().name}")
+                        coroutineAPIService.publicEvent("humanheima").await()
+                    }
+
+                    val combine: MutableList<Event> = arrayListOf()
+
+                    val oneResult: List<Event> = one.await()
+                    val twoResult = two.await()
+
+                    combine.addAll(oneResult)
+                    combine.addAll(twoResult)
+                    view?.let {
+                        if (it.canUpdateUI()) {
+                            it.setResult("getPublicEvent2: ${combine.size}")
+                        }
+                    }
+                    Log.d(TAG, "getPublicEvent2: ${combine.size}")
                 }
-                Log.d(TAG, "getPublicEvent2: ${combine.size}")
+
             } catch (e: Throwable) {
                 Log.d(TAG, "getPublicEvent2: error  ${e.message}")
             }

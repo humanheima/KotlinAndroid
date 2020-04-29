@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CoroutineNetActivity">
+    android:orientation="vertical"
+    tools:context=".CoroutineOkHttpNetActivity">
 
-</android.support.constraint.ConstraintLayout>
+    <Button
+        android:id="@+id/btnNormalRequest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="OkHttp正常请求" />
+
+    <Button
+        android:id="@+id/btnCoroutineRequest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="使用协程请求" />
+
+</LinearLayout>
