@@ -1,6 +1,6 @@
 package com.hm.dumingwei.net
 
-import com.hm.dumingwei.mvp.model.bean.GankResult
+import com.hm.dumingwei.mvp.model.bean.WxArticleResponse
 import retrofit2.Call
 import retrofit2.http.GET
 
@@ -11,10 +11,11 @@ import retrofit2.http.GET
  */
 interface ApiService {
 
-    @GET("data/iOS/2/1")
-    fun getIOSGank(): Call<GankResult>
 
-    @GET("data/Android/2/1")
-    fun getAndroidGank(): Call<GankResult>
+    @GET("wxarticle/chapters/json")
+    fun getWxarticle(): Call<WxArticleResponse>
+
+    @GET("wxarticle/chapters/json")
+    suspend fun getWxarticle2(): WxArticleResponse
 
 }

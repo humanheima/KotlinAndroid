@@ -19,6 +19,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        btnRetrofitAndCoroutine.setOnClickListener {
+            CoroutineRetrofitNetActivity.launch(this)
+        }
         btnOkHttpVsCoroutine.setOnClickListener {
             CoroutineOkHttpNetActivity.launch(this)
         }

@@ -173,9 +173,9 @@ fun View.onClick(time: Long = 600, action: suspend (View) -> Unit) {
 }
 
 /**
- * 扩展Retrofit.Call类，为其扩展一个await方法，并标识为挂起函数
+ * 扩展Retrofit.Call类，为其扩展一个awaitResponse方法，并标识为挂起函数
  */
-suspend fun <T : Any?> Call<T>.await(): T {
+suspend fun <T : Any?> Call<T>.awaitResponse(): T {
 
     return suspendCoroutine {
         enqueue(object : Callback<T> {
@@ -200,7 +200,7 @@ suspend fun <T : Any?> Call<T>.await(): T {
     }
 }
 
-suspend fun okhttp3.Call.await(): okhttp3.Response {
+suspend fun okhttp3.Call.awaitResponse(): okhttp3.Response {
 
     return suspendCoroutine {
         enqueue(object : okhttp3.Callback {

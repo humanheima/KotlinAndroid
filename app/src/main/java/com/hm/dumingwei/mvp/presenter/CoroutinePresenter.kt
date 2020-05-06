@@ -1,13 +1,12 @@
 package com.hm.dumingwei.mvp.presenter
 
 import android.util.Log
-import com.hm.dumingwei.kotlinandroid.await
+import com.hm.dumingwei.kotlinandroid.awaitResponse
 import com.hm.dumingwei.kotlinandroid.handbook.thirteen.Event
 import com.hm.dumingwei.kotlinandroid.handbook.thirteen.RetrofitManager
 import com.hm.dumingwei.mvp.view.CoroutineView
 import kotlinx.coroutines.*
 import retrofit2.Response
-import kotlin.coroutines.CoroutineContext
 
 /**
  * Created by dumingwei on 2020/4/24.
@@ -27,8 +26,8 @@ class CoroutinePresenter(scope: CoroutineScope?) : BaseNetPresenter<CoroutineVie
         scope?.launch {
             try {
                 //网络请求，并不会阻塞主线程
-                val events: List<Event> = coroutineAPIService.publicEvent("humanheima").await()
-                val events2: List<Event> = coroutineAPIService.publicEvent("humanheima").await()
+                val events: List<Event> = coroutineAPIService.publicEvent("humanheima").awaitResponse()
+                val events2: List<Event> = coroutineAPIService.publicEvent("humanheima").awaitResponse()
 
                 val builder = StringBuilder()
                 for (event in events) {
@@ -64,11 +63,11 @@ class CoroutinePresenter(scope: CoroutineScope?) : BaseNetPresenter<CoroutineVie
                 withContext(Dispatchers.Main) {
                     val one: Deferred<List<Event>> = async {
                         Log.d(TAG, "getPublicEvent2: async1 ${Thread.currentThread().name}")
-                        coroutineAPIService.publicEvent("humanheima").await()
+                        coroutineAPIService.publicEvent("humanheima").awaitResponse()
                     }
                     val two = async {
                         Log.d(TAG, "getPublicEvent2: async2 ${Thread.currentThread().name}")
-                        coroutineAPIService.publicEvent("humanheima").await()
+                        coroutineAPIService.publicEvent("humanheima").awaitResponse()
                     }
 
                     val combine: MutableList<Event> = arrayListOf()

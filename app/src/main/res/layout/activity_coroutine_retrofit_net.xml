@@ -14,13 +14,29 @@
             android:id="@+id/btnNormalRequest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="OkHttp正常请求" />
+            android:text="Retrofit正常请求"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/btnCoroutineRequest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="使用协程请求" />
+            android:text="使用协程请求"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btnCoroutineRequest1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="使用Retrofit2.6加协程请求"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btnCoroutineRequest2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="使用Retrofit2.6加协程请求使用异常处理器"
+            android:textAllCaps="false" />
 
         <TextView
             android:id="@+id/tvResult"

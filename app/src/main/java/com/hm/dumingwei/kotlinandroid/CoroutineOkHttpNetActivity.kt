@@ -7,9 +7,9 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_coroutine_net.*
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.flow
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -49,37 +49,93 @@ class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainSc
                 .build()
 
         btnNormalRequest.setOnClickListener {
+            tvResult.text = null
             normalRequest()
         }
 
         btnCoroutineRequest.setOnClickListener {
+            tvResult.text = null
             coroutineRequest()
+            //coroutineRequest1()
 
         }
-
     }
 
     private fun coroutineRequest() {
         val request1 = Request.Builder()
-                .url("http://www.publicobject.com/helloworld.txt")
+                .url("https://wanandroid.com/wxarticle/chapters/json")
                 .header("User-Agent", "OkHttp Example")
                 .build()
         launch {
+            Log.d(TAG, "coroutineRequest: ${Thread.currentThread().name}")
             try {
-                val response = client.newCall(request1).await()
-                withContext(Dispatchers.IO) {
-                    Log.d(TAG, "协程请求 onResponse: ${response.body()?.string()}")
+                withContext(Dispatchers.Main) {
+                    val response = client.newCall(request1).awaitResponse()
+                    val string = getString(response)
+                    tvResult.text = "协程请求 onResponse: $string"
                 }
-
             } catch (e: Exception) {
                 Log.d(TAG, "coroutine: error ${e.message}")
             }
         }
     }
 
+    /**
+     * 使用https://api.github.com/这个接口来测试 exception 是否能被捕获住
+     *
+     * 这个方法可以抓住异常，注意和对比coroutineRequest2方法
+     */
+    private fun coroutineRequest1() {
+        val request1 = Request.Builder()
+                .url("https://api.github.com/users/humanheima/events/public")
+                .header("User-Agent", "OkHttp Example")
+                .build()
+        launch {
+            Log.d(TAG, "coroutineRequest: ${Thread.currentThread().name}")
+            try {
+                withContext(Dispatchers.Main) {
+                    val response: Deferred<Response> = async { client.newCall(request1).awaitResponse() }
+                    val string = getString(response.await())
+                    tvResult.text = "协程请求 onResponse: $string"
+                }
+            } catch (e: Exception) {
+                Log.d(TAG, "coroutine: error ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * 使用https://api.github.com/这个接口来测试 exception 是否能被捕获住
+     * 这个方法抓不住异常
+     */
+    private fun coroutineRequest2() {
+        val request1 = Request.Builder()
+                .url("https://api.github.com/users/humanheima/events/public")
+                .header("User-Agent", "OkHttp Example")
+                .build()
+        launch {
+            Log.d(TAG, "coroutineRequest: ${Thread.currentThread().name}")
+            try {
+                //withContext(Dispatchers.Main) {
+                val response: Deferred<Response> = async { client.newCall(request1).awaitResponse() }
+                val string = getString(response.await())
+                tvResult.text = "协程请求 onResponse: $string"
+                //}
+            } catch (e: Exception) {
+                Log.d(TAG, "coroutine: error ${e.message}")
+            }
+        }
+    }
+
+    private suspend fun getString(response: Response): String {
+        return withContext(Dispatchers.IO) {
+            response.body()?.string() ?: "empty string"
+        }
+    }
+
     private fun normalRequest() {
         val request = Request.Builder()
-                .url("http://www.publicobject.com/helloworld.txt")
+                .url("https://wanandroid.com/wxarticle/chapters/json")
                 .header("User-Agent", "OkHttp Example")
                 .build()
 
@@ -90,8 +146,11 @@ class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainSc
             }
 
             override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                Log.d(TAG, "正常请求 onResponse: ${response.body()?.string()}")
-
+                val string = response.body()?.string()
+                Log.d(TAG, "正常请求 onResponse: $string")
+                runOnUiThread {
+                    tvResult.text = "正常请求 onResponse: $string"
+                }
             }
         })
     }

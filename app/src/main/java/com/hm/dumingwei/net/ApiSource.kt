@@ -14,7 +14,7 @@ class ApiSource {
 
         @JvmField
         val instance = Retrofit.Builder()
-                .baseUrl("http://gank.io/api/")
+                .baseUrl("https://www.wanandroid.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build().create(ApiService::class.java)
     }

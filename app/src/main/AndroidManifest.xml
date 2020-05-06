@@ -28,6 +28,7 @@
         <activity android:name=".handbook.eleven.SecondActivity" />
         <activity android:name=".handbook.thirteen.GithubEventActivity" />
         <activity android:name=".tutorial.coroutine.CoroutineBaseActivity" />
+        <activity android:name=".CoroutineRetrofitNetActivity" />
     </application>
 
 </manifest>
