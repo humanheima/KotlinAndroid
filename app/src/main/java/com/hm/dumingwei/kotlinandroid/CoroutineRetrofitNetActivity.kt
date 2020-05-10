@@ -6,14 +6,13 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.hm.dumingwei.mvp.model.bean.WxArticleResponse
-import com.hm.dumingwei.net.ApiSource
+import com.hm.dumingwei.net.ApiService
 import kotlinx.android.synthetic.main.activity_coroutine_retrofit_net.*
 import kotlinx.coroutines.*
-import okhttp3.OkHttpClient
 import okhttp3.Response
 import retrofit2.Call
-import java.lang.StringBuilder
-import java.util.concurrent.TimeUnit
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 /**
  * Created by dumingwei on 2020/4/24
@@ -22,12 +21,12 @@ import java.util.concurrent.TimeUnit
  */
 class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
-    private lateinit var client: OkHttpClient
-    private lateinit var builder: OkHttpClient.Builder
+    private val TAG: String? = "CoroutineRetrofitNetAct"
 
-    private val TAG: String? = "CoroutineOkHttpNetActiv"
-
-    private val apiSource = ApiSource.instance
+    private val apiService = Retrofit.Builder()
+            .baseUrl("https://www.wanandroid.com/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build().create(ApiService::class.java)
 
     companion object {
 
@@ -41,16 +40,6 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_coroutine_retrofit_net)
-
-        builder = OkHttpClient.Builder()
-                //.addInterceptor(new LoggingInterceptor())
-                //.addNetworkInterceptor(new LoggingInterceptor())
-                //.addInterceptor(interceptor)
-                .readTimeout(5000, TimeUnit.MILLISECONDS)
-                .writeTimeout(10000, TimeUnit.MILLISECONDS)
-
-        client = builder
-                .build()
 
         btnNormalRequest.setOnClickListener {
             tvResult.text = null
@@ -76,9 +65,9 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
         launch {
             try {
                 //需要借助Retrofit.Call类的扩展方法
-                val response: WxArticleResponse = apiSource.getWxarticle().awaitResponse()
+                val response: WxArticleResponse = apiService.getWxarticle().awaitResponse()
                 val sb = StringBuilder("Retrofit配合协程请求：\n")
-                response.data?.forEach {
+                response.data.forEach {
                     sb.append(it.name)
                     sb.append("\n")
                 }
@@ -98,9 +87,9 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
     private fun coroutineRequest2_6() {
         launch {
             try {
-                val response = apiSource.getWxarticle2()
+                val response = apiService.getWxarticle2()
                 val sb = StringBuilder("Retrofit2.6配合协程请求：\n")
-                response.data?.forEach {
+                response.data.forEach {
                     sb.append(it.name)
                     sb.append("\n")
                 }
@@ -111,10 +100,6 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
         }
     }
 
-    /**
-     * 使用https://api.github.com/这个接口来测试 exception 是否能被捕获住
-     * 这个方法抓不住异常
-     */
 
     val handler = CoroutineExceptionHandler { _, exception ->
         Log.d(TAG, "Caught original $exception")
@@ -122,9 +107,9 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
 
     private fun coroutineRequest2() {
         launch(handler) {
-            val response = apiSource.getWxarticle2()
+            val response = apiService.getWxarticle2()
             val sb = StringBuilder("Retrofit2.6配合协程请求：\n")
-            response.data?.forEach {
+            response.data.forEach {
                 sb.append(it.name)
                 sb.append("\n")
             }
@@ -139,7 +124,7 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
     }
 
     private fun normalRequest() {
-        apiSource.getWxarticle().enqueue(object : retrofit2.Callback<WxArticleResponse> {
+        apiService.getWxarticle().enqueue(object : retrofit2.Callback<WxArticleResponse> {
             override fun onFailure(call: Call<WxArticleResponse>, t: Throwable) {
                 Log.d(TAG, "onFailure: ${t.message}")
             }

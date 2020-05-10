@@ -5,11 +5,13 @@ package com.hm.dumingwei.mvp.model.bean
  *
  * Desc:
  */
-class WxArticleResponse {
+data class WxArticleResponse(
+        var data: List<DataBean>,
+        var errorCode: Int = 0,
+        var errorMsg: String? = null
 
-    var errorCode = 0
-    var errorMsg: String? = null
-    var data: List<DataBean>? = null
+) {
+
 
     class DataBean {
         /**

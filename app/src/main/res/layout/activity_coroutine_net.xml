@@ -22,6 +22,18 @@
             android:layout_height="wrap_content"
             android:text="使用协程请求" />
 
+        <Button
+            android:id="@+id/btnCoroutineRequest2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="两次网络请求，第二次请求依赖第一次请求结果" />
+
+        <Button
+            android:id="@+id/btnCoroutineRequest3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="并行发起多次网络请求，网络请求之间没有依赖关系" />
+
         <TextView
             android:id="@+id/tvResult"
             android:layout_width="match_parent"
