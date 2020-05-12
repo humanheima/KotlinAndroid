@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".tutorial.coroutine.CoroutineExceptionActivity"></activity>
+        <activity android:name="com.hm.dumingwei.dsl.KotlinDSLActivity"></activity>
+        <activity android:name=".tutorial.coroutine.CoroutineExceptionActivity" />
         <activity android:name=".CoroutineOkHttpNetActivity" />
         <activity android:name=".lazy_init.LazyInitActivity" />
         <activity android:name=".findviewbyid.FindViewByIdActivity" />

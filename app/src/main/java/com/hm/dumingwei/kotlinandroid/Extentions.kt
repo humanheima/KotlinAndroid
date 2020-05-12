@@ -215,3 +215,9 @@ suspend fun okhttp3.Call.awaitResponse(): okhttp3.Response {
         })
     }
 }
+
+fun <T> MutableList<T>.swap(index1: Int, index2: Int) {
+    val tmp = this[index1] // “this”对应该列表
+    this[index1] = this[index2]
+    this[index2] = tmp
+}
