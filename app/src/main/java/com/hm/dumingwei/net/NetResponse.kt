@@ -5,4 +5,6 @@ class NetResponse<T> {
     var errorMsg = ""
     var errorCode = 0
 
+
+    fun success() = errorCode == 0
 }

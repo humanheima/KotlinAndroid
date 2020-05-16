@@ -8,7 +8,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import com.hm.dumingwei.kotlinandroid.R
-import com.hm.dumingwei.kotlinandroid.swap
 import kotlinx.android.synthetic.main.activity_kotlin_dsl.*
 
 /**
@@ -51,7 +50,6 @@ class KotlinDSLActivity : AppCompatActivity() {
 
 
         val list = mutableListOf(1, 2, 3, 4)
-        list.swap(0, 2)
 
     }
 }

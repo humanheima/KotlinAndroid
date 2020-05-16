@@ -1,10 +1,10 @@
 package com.hm.dumingwei.mvp.presenter
 
 import android.util.Log
-import com.hm.dumingwei.kotlinandroid.awaitResponse
 import com.hm.dumingwei.kotlinandroid.handbook.thirteen.Event
 import com.hm.dumingwei.kotlinandroid.handbook.thirteen.RetrofitManager
 import com.hm.dumingwei.mvp.view.CoroutineView
+import com.hm.dumingwei.net.awaitResponse
 import kotlinx.coroutines.*
 import retrofit2.Response
 

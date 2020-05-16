@@ -425,6 +425,8 @@ class NetResponse<T> {
     var errorMsg = ""
     var errorCode = 0
 
+
+    fun success() = errorCode == 0
 }
 ```
 
@@ -445,37 +447,41 @@ fun getWxarticleListLowLevelFormat2(): Call<NetResponse<MutableList<WxArticleRes
 使用
 ```kotlin
 private fun handlerLowLevelResponseFormat1() {
-    launch {
-        try {
-            val response: NetResponse<Article> = 
-                   apiService.getArticleLowLevelFormat1().awaitResponse()
+    launch(handler) {
+        //需要借助Retrofit.Call类的扩展方法
+        val response: NetResponse<Article> =
+                apiService.getArticleLowLevelFormat1().awaitResponse()
+        if (response.success()) {
             val sb = StringBuilder("Retrofit2.6以下响应格式统一处理1：\n")
             response.data?.datas?.forEach {
                 sb.append(it.title)
                 sb.append("\n")
             }
             tvResult.text = sb.toString()
-
-        } catch (e: Exception) {
-            Log.d(TAG, "handlerLowLevelResponseFormat1: error: ${e.message}")
+        } else {
+           Log.d(TAG, "handlerLowLevelResponseFormat1: failed ${response.errorMsg}")
         }
-
     }
 }
 
 private fun handlerLowLevelResponseFormat2() {
     launch(handler) {
-        val response: NetResponse<MutableList<WxArticleResponse.DataBean>> = 
+        val response: NetResponse<MutableList<WxArticleResponse.DataBean>> =
                 apiService.getWxarticleListLowLevelFormat2().awaitResponse()
-        val sb = StringBuilder("Retrofit2.6以下响应格式统一处理2：\n")
-        response.data?.forEach {
-            sb.append(it.name)
-            sb.append("\n")
-            Log.d(TAG, "handlerLowLevelResponseFormat2: ${it.name}")
+        if (response.success()) {
+            val sb = StringBuilder("Retrofit2.6以下响应格式统一处理2：\n")
+            response.data?.forEach {
+                sb.append(it.name)
+                sb.append("\n")
+                Log.d(TAG, "handlerLowLevelResponseFormat2: ${it.name}")
+            }
+            tvResult.text = sb.toString()
+        } else {
+            Log.d(TAG, "handlerLowLevelResponseFormat2: failed ${response.errorMsg}")
         }
-        tvResult.text = sb.toString()
     }
 }
+
 ```
 
 ### Retrofit2.6.0以上格式统一处理
@@ -492,21 +498,39 @@ suspend fun getWxarticleList(): NetResponse<MutableList<WxArticleResponse.DataBe
 ```
 使用
 ```
-private fun handlerResponseFormat1() {
+ private fun handlerResponseFormat1() {
     launch(handler) {
-        val article: Article? = apiService.getArticle().data
-        article?.datas?.forEach {
-            Log.d(TAG, "handlerResponseFormat1: ${it.title}")
+        val response = apiService.getArticle()
+        if (response.success()) {
+            val article: Article? = apiService.getArticle().data
+            val sb = StringBuilder("handlerResponseFormat1：\n")
+
+            article?.datas?.forEach {
+                sb.append(it.title)
+                sb.append("\n")
+                Log.d(TAG, "handlerResponseFormat1: ${it.title}")
+            }
+            tvResult.text = sb.toString()
+        } else {
+            Log.d(TAG, "handlerResponseFormat1: failed ${response.errorMsg}")
         }
     }
 }
 
 private fun handlerResponseFormat2() {
     launch(handler) {
-        val articleList: MutableList<WxArticleResponse.DataBean>? = 
-                  apiService.getWxarticleList().data
-        articleList?.forEach {
-            Log.d(TAG, "handlerResponseFormat2: ${it.name}")
+        val response = apiService.getWxarticleList()
+        if (response.success()) {
+            val articleList: MutableList<WxArticleResponse.DataBean>? = apiService.getWxarticleList().data
+            val sb = StringBuilder("handlerResponseFormat2：\n")
+            articleList?.forEach {
+                sb.append(it.name)
+                sb.append("\n")
+                Log.d(TAG, "handlerResponseFormat2: ${it.name}")
+            }
+            tvResult.text = sb.toString()
+        } else {
+            Log.d(TAG, "handlerResponseFormat2: failed ${response.errorMsg}")
         }
     }
 }
