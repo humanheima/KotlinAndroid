@@ -1,5 +1,6 @@
 package com.hm.dumingwei.kotlinandroid.handbook.thirteen
 
+import com.hm.dumingwei.net.HttpLoggingInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -38,6 +39,7 @@ class RetrofitManager private constructor() {
         builder.writeTimeout((5 * 1000).toLong(), TimeUnit.MILLISECONDS)
         builder.readTimeout((5 * 1000).toLong(), TimeUnit.MILLISECONDS)
         builder.connectTimeout((5 * 1000).toLong(), TimeUnit.MILLISECONDS)
+        builder.addInterceptor(HttpLoggingInterceptor(HttpLoggingInterceptor.Level.BODY))
 
         okhttpClient = builder.build()
 

@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.hm.dumingwei.JsonUtilKt
 import com.hm.dumingwei.mvp.model.bean.WxArticleResponse
+import com.hm.dumingwei.net.awaitResponse
 import kotlinx.android.synthetic.main.activity_coroutine_net.*
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient

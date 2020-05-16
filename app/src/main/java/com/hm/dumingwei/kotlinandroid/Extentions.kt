@@ -12,13 +12,6 @@ import android.widget.Toast
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.actor
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.io.IOException
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * Toast的封装
@@ -170,54 +163,4 @@ fun View.onClick(time: Long = 600, action: suspend (View) -> Unit) {
     setOnClickListener {
         eventActor.offer(Unit)
     }
-}
-
-/**
- * 扩展Retrofit.Call类，为其扩展一个awaitResponse方法，并标识为挂起函数
- */
-suspend fun <T : Any?> Call<T>.awaitResponse(): T {
-
-    return suspendCoroutine {
-        enqueue(object : Callback<T> {
-            override fun onFailure(call: Call<T>, t: Throwable) {
-                it.resumeWithException(t)
-            }
-
-            override fun onResponse(call: Call<T>, response: Response<T>) {
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    if (body != null) {
-                        it.resume(body)
-                    } else {
-                        it.resumeWithException(Throwable(response.toString()))
-                    }
-
-                } else {
-                    it.resumeWithException(Throwable(response.toString()))
-                }
-            }
-        })
-    }
-}
-
-suspend fun okhttp3.Call.awaitResponse(): okhttp3.Response {
-
-    return suspendCoroutine {
-        enqueue(object : okhttp3.Callback {
-            override fun onFailure(call: okhttp3.Call, e: IOException) {
-                it.resumeWithException(e)
-            }
-
-            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
-                //后台线程
-                it.resume(response)
-            }
-        })
-    }
-}
-
-fun <T> MutableList<T>.swap(index1: Int, index2: Int) {
-    val tmp = this[index1] // “this”对应该列表
-    this[index1] = this[index2]
-    this[index2] = tmp
 }

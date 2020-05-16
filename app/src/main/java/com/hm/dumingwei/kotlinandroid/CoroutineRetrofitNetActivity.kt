@@ -5,10 +5,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import com.hm.dumingwei.mvp.model.bean.Article
 import com.hm.dumingwei.mvp.model.bean.WxArticleResponse
 import com.hm.dumingwei.net.ApiService
+import com.hm.dumingwei.net.HttpLoggingInterceptor
+import com.hm.dumingwei.net.NetResponse
+import com.hm.dumingwei.net.awaitResponse
 import kotlinx.android.synthetic.main.activity_coroutine_retrofit_net.*
 import kotlinx.coroutines.*
+import okhttp3.OkHttpClient
 import okhttp3.Response
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -23,9 +28,11 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
 
     private val TAG: String? = "CoroutineRetrofitNetAct"
 
+    private val httpLoggingInterceptor = HttpLoggingInterceptor(HttpLoggingInterceptor.Level.BODY)
     private val apiService = Retrofit.Builder()
             .baseUrl("https://www.wanandroid.com/")
             .addConverterFactory(GsonConverterFactory.create())
+            .client(OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor).build())
             .build().create(ApiService::class.java)
 
     companion object {
@@ -58,6 +65,19 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
         }
         btnCoroutineRequest2.setOnClickListener {
             coroutineRequest2()
+        }
+
+        btnHandleResponseFormat1.setOnClickListener {
+            handlerResponseFormat1()
+        }
+        btnHandleResponseFormat2.setOnClickListener {
+            handlerResponseFormat2()
+        }
+        btnHandleLowLevelResponseFormat1.setOnClickListener {
+            handlerLowLevelResponseFormat1()
+        }
+        btnHandleLowLevelResponseFormat2.setOnClickListener {
+            handlerLowLevelResponseFormat2()
         }
     }
 
@@ -141,6 +161,68 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
                 }
             }
         })
+    }
+
+    private fun handlerResponseFormat1() {
+        launch(handler) {
+            val article: Article? = apiService.getArticle().data
+            val sb = StringBuilder("handlerResponseFormat1：\n")
+
+            article?.datas?.forEach {
+                sb.append(it.title)
+                sb.append("\n")
+                Log.d(TAG, "handlerResponseFormat1: ${it.title}")
+            }
+            tvResult.text = sb.toString()
+        }
+    }
+
+    private fun handlerResponseFormat2() {
+        launch(handler) {
+            val articleList: MutableList<WxArticleResponse.DataBean>? = apiService.getWxarticleList().data
+            val sb = StringBuilder("handlerResponseFormat2：\n")
+            articleList?.forEach {
+                sb.append(it.name)
+                sb.append("\n")
+                Log.d(TAG, "handlerResponseFormat2: ${it.name}")
+            }
+            tvResult.text = sb.toString()
+
+        }
+    }
+
+    private fun handlerLowLevelResponseFormat1() {
+        launch {
+            try {
+                //需要借助Retrofit.Call类的扩展方法
+                val response: NetResponse<Article> = apiService.getArticleLowLevelFormat1().awaitResponse()
+                val sb = StringBuilder("Retrofit2.6以下响应格式统一处理1：\n")
+                response.data?.datas?.forEach {
+                    sb.append(it.title)
+                    sb.append("\n")
+                }
+                tvResult.text = sb.toString()
+
+            } catch (e: Exception) {
+                Log.d(TAG, "handlerLowLevelResponseFormat1: error: ${e.message}")
+            }
+
+        }
+    }
+
+    private fun handlerLowLevelResponseFormat2() {
+        launch(handler) {
+            val response: NetResponse<MutableList<WxArticleResponse.DataBean>> =
+                    apiService.getWxarticleListLowLevelFormat2().awaitResponse()
+            val sb = StringBuilder("Retrofit2.6以下响应格式统一处理2：\n")
+            response.data?.forEach {
+                sb.append(it.name)
+                sb.append("\n")
+                Log.d(TAG, "handlerLowLevelResponseFormat2: ${it.name}")
+            }
+            tvResult.text = sb.toString()
+
+        }
     }
 
     override fun onDestroy() {
