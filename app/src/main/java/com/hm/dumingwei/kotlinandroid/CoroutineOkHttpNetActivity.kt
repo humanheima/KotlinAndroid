@@ -68,6 +68,10 @@ class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainSc
             tvResult.text = null
             coroutineRequest3()
         }
+        btnCancelCoroutine.setOnClickListener {
+            tvResult.text = null
+            cancelCoroutine()
+        }
     }
 
     private fun coroutineRequest() {
@@ -82,6 +86,7 @@ class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainSc
                 val startTime = System.currentTimeMillis()
                 //注释1处，发起两次请求
                 val response1 = client.newCall(request1).awaitResponse()
+
                 val response2 = client.newCall(request2).awaitResponse()
 
                 Log.d(TAG, "coroutineRequest: 顺序网络请求消耗时间：${System.currentTimeMillis() - startTime}")
@@ -93,6 +98,31 @@ class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainSc
                 Log.d(TAG, "coroutine: error ${e.message}")
             }
         }
+    }
+
+    private fun cancelCoroutine() {
+        val request1 = Request.Builder()
+                .url("https://wanandroid.com/wxarticle/chapters/json")
+                .build()
+
+        val job = launch {
+            try {
+                val startTime = System.currentTimeMillis()
+                //注释1处，发起两次请求
+                val response1 = client.newCall(request1).awaitResponse()
+                val string1 = getString(response1)
+                tvResult.text = "协程请求 onResponse: $string1"
+            } catch (e: Exception) {
+                Log.d(TAG, "cancelCoroutine: error ${e.message}")
+            }
+        }
+
+        launch {
+            delay(200)
+            //取消协程
+            job.cancel()
+        }
+
     }
 
     private fun coroutineRequest2() {

@@ -5,6 +5,16 @@
 相关代码可以参考[KotlinAndroid](https://github.com/humanheima/KotlinAndroid)中的CoroutineOkHttpNetActivity和CoroutineRetrofitNetActivity。
 
 
+## 加入依赖
+
+```
+//使用kotlin的依赖
+implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+//在Android中使用协程需要添加此依赖
+implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1'
+```
+
 ## Kotlin协程配合OkHttp
 
 先初始化OkHttpClient
@@ -107,7 +117,7 @@ private fun coroutineRequest() {
 ```
 注释1处，调用`awaitResponse`方法发起网络请求。
 
-注释2处，因为`okhttp3.ResponseBody`的`string`方法是一个IO操作，可能会比较耗时。所以我们通过一个刮起函数将这个操作放在后台线程执行。
+注释2处，因为`okhttp3.ResponseBody`的`string`方法是一个IO操作，可能会比较耗时。所以我们通过一个挂起函数将这个操作放在后台线程执行。
 ```
 private suspend fun getString(response: Response): String {
     return withContext(Dispatchers.IO) {
@@ -116,7 +126,7 @@ private suspend fun getString(response: Response): String {
 }
 ```
 
-我们在开发过程中，通常会遇到这样的场景：发起两次网络请求，第二次网络请求要依赖于第一次网络请求的结果。那我们改怎么写呢？
+我们在开发过程中，通常会遇到这样的场景：发起两次网络请求，第二次网络请求要依赖于第一次网络请求的结果。那我们该怎么写呢？
 
 我们先获取公众号列表，然后查看列表中第一个公众号的历史数据。
 
@@ -132,6 +142,7 @@ private fun coroutineRequest() {
             val response1 = client.newCall(request1).awaitResponse()
             val string1 = getString(response1)
             val wxArticleResponse = JsonUtilKt.instance.toObject(string1, WxArticleResponse::class.java)
+
             //第二个网络请求依赖于第一个网络请求结果
             val firstWxId = wxArticleResponse?.data?.get(0)?.id ?: return@launch
             //第二个网络请求
@@ -537,16 +548,13 @@ private fun handlerResponseFormat2() {
 ```
 
 其他：
-以后想要了解的点：
-* 协程 launch 和 async 的区别
+* 协程 launch 和 async 的区别参考 [What is the difference between launch/join and async/await in Kotlin coroutines](https://stackoverflow.com/questions/46226518/what-is-the-difference-between-launch-join-and-async-await-in-kotlin-coroutines)
 
 参考链接：
 * [Android中用Kotlin Coroutine(协程)和Retrofit进行网络请求和取消请求](https://juejin.im/post/5cbd890bf265da03594871a5)
 * [Retrofit 2.6.0 ! 更快捷的协程体验 ！](https://juejin.im/post/5d0793616fb9a07eac05d407)
 * [Android 开发中 Kotlin Coroutines 如何优雅地处理异常](https://www.jianshu.com/p/2056d5424001)
-
-
-
-
+* [https://github.com/Kotlin/kotlinx.coroutines](https://github.com/Kotlin/kotlinx.coroutines)
+* [What is the difference between launch/join and async/await in Kotlin coroutines](https://stackoverflow.com/questions/46226518/what-is-the-difference-between-launch-join-and-async-await-in-kotlin-coroutines)
 
 

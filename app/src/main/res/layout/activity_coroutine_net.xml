@@ -34,6 +34,12 @@
             android:layout_height="wrap_content"
             android:text="并行发起多次网络请求，网络请求之间没有依赖关系" />
 
+        <Button
+            android:id="@+id/btnCancelCoroutine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="取消协程，协程取消的时候要取消网络请求" />
+
         <TextView
             android:id="@+id/tvResult"
             android:layout_width="match_parent"
