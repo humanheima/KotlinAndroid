@@ -9,10 +9,10 @@
 
 ```
 //使用kotlin的依赖
-implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.71"
 
 //在Android中使用协程需要添加此依赖
-implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1'
+implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.0'
 ```
 
 ## Kotlin协程配合OkHttp
@@ -36,7 +36,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 ```
 ### OkHttp正常发起网络请求
 
-```
+```kotlin
 private fun normalRequest() {
     //请求公众号列表
     val request = Request.Builder()
@@ -63,10 +63,16 @@ private fun normalRequest() {
 ### 协程配合OkHttp正常发起网络请求
 
 1. 首先给`okhttp3.Call`添加一个扩展函数，就是对`okhttp3.Call`的`enqueue`方法做了一个包装。
-```
+```kotlin
 suspend fun okhttp3.Call.awaitResponse(): okhttp3.Response {
 
-    return suspendCoroutine {
+    return suspendCancellableCoroutine {
+      //注释1处
+      it.invokeOnCancellation {
+            //当协程被取消的时候，取消网络请求
+            cancel()
+        }
+
         enqueue(object : okhttp3.Callback {
             override fun onFailure(call: okhttp3.Call, e: IOException) {
                 it.resumeWithException(e)
@@ -80,23 +86,24 @@ suspend fun okhttp3.Call.awaitResponse(): okhttp3.Response {
 }
 ```
 
-然后我们在Activity中使用
-```
-class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainScope() {
+注释1处，当协程被取消当时候，我们要取消网络请求。
 
+然后我们在Activity中使用
+```kotlin
+class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
     override fun onDestroy() {
         super.onDestroy()
-        //取消所有的任务
+        //取消所有的协程
         this.cancel()
     }
 
 }
 ```
-我们实现了CoroutineScope接口，然后我们将CoroutineScope的实现委托给`MainScope`。注意要在onDestroy的时候取消所有的任务。
+我们实现了CoroutineScope接口，然后我们将CoroutineScope的实现委托给`MainScope`。注意要在onDestroy的时候取消所有的协程。
 
 **发起请求**
-```
+```kotlin
 private fun coroutineRequest() {
     //请求公众号列表
     val request1 = Request.Builder()
@@ -118,7 +125,7 @@ private fun coroutineRequest() {
 注释1处，调用`awaitResponse`方法发起网络请求。
 
 注释2处，因为`okhttp3.ResponseBody`的`string`方法是一个IO操作，可能会比较耗时。所以我们通过一个挂起函数将这个操作放在后台线程执行。
-```
+```kotlin
 private suspend fun getString(response: Response): String {
     return withContext(Dispatchers.IO) {
         response.body()?.string() ?: "empty string"
@@ -130,7 +137,7 @@ private suspend fun getString(response: Response): String {
 
 我们先获取公众号列表，然后查看列表中第一个公众号的历史数据。
 
-```
+```kotlin
 private fun coroutineRequest() {
     val request1 = Request.Builder()
             .url("https://wanandroid.com/wxarticle/chapters/json")
@@ -169,7 +176,7 @@ private fun coroutineRequest() {
 
 如果按照上面的例子，我们可以这样写：
 
-```
+```kotlin
 private fun coroutineRequest() {
     val request1 = Request.Builder()
             .url("https://wanandroid.com/wxarticle/chapters/json")
@@ -202,48 +209,47 @@ D/CoroutineOkHttpNetActiv: coroutineRequest: 网络请求消耗时间：70
 ```
 
 正确的写法，并行发起请求。
-```
-    private fun coroutineRequest3() {
-        val request1 = Request.Builder()
-                .url("https://wanandroid.com/wxarticle/chapters/json")
-                .build()
-        val request2 = Request.Builder()
-                .url("https://wanandroid.com/wxarticle/chapters/json")
-                .build()
+```kotlin
+private fun coroutineRequest3() {
+    val request1 = Request.Builder()
+            .url("https://wanandroid.com/wxarticle/chapters/json")
+            .build()
+    val request2 = Request.Builder()
+            .url("https://wanandroid.com/wxarticle/chapters/json")
+            .build()
 
-        launch {
-            try {
-                val startTime = System.currentTimeMillis()
-                //注释1处，使用async要重新指定协程上下文，不然会出现有些异常捕捉不到造成崩溃
-                withContext(Dispatchers.Main) {
-                    //两次网络请求没有依赖关系，可以并发请求
-                    val deferred1 = async { client.newCall(request1).awaitResponse() }
-                    val deferred2 = async { client.newCall(request2).awaitResponse() }
-                    val response1 = deferred1.await()
-                    val response2 = deferred2.await()
-                    Log.d(TAG, "coroutineRequest: 并发网络请求消耗时间：${System.currentTimeMillis() - startTime}")
-                    val string1 = getString(response1)
-                    val string2 = getString(response2)
-                    tvResult.text = "协程请求 onResponse: ${string1 + string2}"
-                }
-            } catch (e: Exception) {
-                Log.d(TAG, "coroutine: error ${e.message}")
+    launch {
+        try {
+            val startTime = System.currentTimeMillis()
+            //注释1处，使用async要重新指定协程上下文，不然会出现有些异常捕捉不到造成崩溃
+            withContext(Dispatchers.Main) {
+                //两次网络请求没有依赖关系，可以并发请求
+                val deferred1 = async { client.newCall(request1).awaitResponse() }
+                val deferred2 = async { client.newCall(request2).awaitResponse() }
+                val response1 = deferred1.await()
+                val response2 = deferred2.await()
+                Log.d(TAG, "coroutineRequest: 并发网络请求消耗时间：${System.currentTimeMillis() - startTime}")
+                val string1 = getString(response1)
+                val string2 = getString(response2)
+                tvResult.text = "协程请求 onResponse: ${string1 + string2}"
             }
+        } catch (e: Exception) {
+            Log.d(TAG, "coroutine: error ${e.message}")
         }
     }
-
+}
 ```
 
 在我的设备上，并发执行两次网络请求最少的耗时时间是45毫秒。打印日志：
 ```
 D/CoroutineOkHttpNetActiv: coroutineRequest: 并发网络请求消耗时间：45
 ```
-**注意：使用async要重新指定协程上下文，不然会出现有些异常捕捉不到造成崩溃，至于其中原理暂时还没搞清楚。**
+**注意：使用async要重新指定协程上下文，不然会出现有些异常捕捉不到造成崩溃，至于其中原理暂时还没搞清楚。关于launch和asyc的异常处理流程有待研究**
 
 ## Kotlin协程配合Retrofit
 
 定义接口方法
-```
+```kotlin
 interface ApiService {
 
     @GET("wxarticle/chapters/json")
@@ -253,7 +259,7 @@ interface ApiService {
 ```
 
 构建接口实例
-```
+```kotlin
 private val apiService = Retrofit.Builder()
             .baseUrl("https://www.wanandroid.com/")
             .addConverterFactory(GsonConverterFactory.create())
@@ -262,7 +268,7 @@ private val apiService = Retrofit.Builder()
 
 ### Retrofit正常请求
 
-```
+```kotlin
 private fun normalRequest() {
     apiService.getWxarticle().enqueue(object : retrofit2.Callback<WxArticleResponse> {
         override fun onFailure(call: Call<WxArticleResponse>, t: Throwable) {
@@ -287,10 +293,16 @@ private fun normalRequest() {
 ### 协程配合Retrofit（2.6.0以下版本）正常网络请求
 
 1. 首先给`Retrofit.Call`类添加一个扩展函数，就是对`retrofit2.Call`的`enqueue`方法做了一个包装。
-```
+```kotlin
 suspend fun <T : Any?> Call<T>.awaitResponse(): T {
 
-    return suspendCoroutine {
+    return suspendCancellableCoroutine {
+        
+        it.invokeOnCancellation {
+            //取消网路请求
+            cancel()
+        }
+
         enqueue(object : Callback<T> {
             override fun onFailure(call: Call<T>, t: Throwable) {
                 it.resumeWithException(t)
@@ -314,7 +326,7 @@ suspend fun <T : Any?> Call<T>.awaitResponse(): T {
 }
 ```
 在Activity中使用
-```
+```kotlin
 class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainScope() {
 
     override fun onDestroy() {
@@ -327,7 +339,7 @@ class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainSc
 ```
 我们实现了CoroutineScope接口，然后我们将CoroutineScope的实现委托给MainScope。注意要在onDestroy的时候取消所有的任务。
 
-```
+```kotlin
 private fun coroutineRequest() {
     launch {
         try {
@@ -349,9 +361,10 @@ private fun coroutineRequest() {
 
 ### 协程配合Retrofit（2.6.0及以上版本）发起网络请求
 
-1. 不再需要给给Retrofit.Call类添加扩展函数。
+1. 不再需要给Retrofit.Call类添加扩展函数，官方已经给我们添加了。[retrofit2/KotlinExtensions.kt](https://github.com/square/retrofit/blob/master/retrofit/src/main/java/retrofit2/KotlinExtensions.kt)
+
 2. 接口方法声明可以简化，方法返回类型直接声明成需要的数据类型。
-```
+```kotlin
 interface ApiService {
 
     //Retrofit2.6.0以下方法声明
@@ -365,7 +378,7 @@ interface ApiService {
 }
 ```
 发起请求
-```
+```kotlin
 private fun coroutineRequest2_6() {
     launch {
         try {
@@ -388,13 +401,13 @@ private fun coroutineRequest2_6() {
 上面的协程请求，为了捕获异常，我们是放在`try/catch`中进行的。有没有更优雅的办法处理呢？有的。
 
 1. 首先初始化一个`CoroutineExceptionHandler`实例。
-```
+```kotlin
 val handler = CoroutineExceptionHandler { _, exception ->
     Log.d(TAG, "Caught original $exception")
 }
 ```
 使用
-```
+```kotlin
 private fun coroutineRequest2() {
     launch(handler) {
         val response = apiService.getWxarticle2()
@@ -430,12 +443,11 @@ private fun coroutineRequest2() {
 ```
 
 首先定义通用的响应类
-```
+```kotlin
 class NetResponse<T> {
     var data: T? = null
     var errorMsg = ""
     var errorCode = 0
-
 
     fun success() = errorCode == 0
 }
@@ -498,7 +510,7 @@ private fun handlerLowLevelResponseFormat2() {
 ### Retrofit2.6.0以上格式统一处理
 
 定义接口方法
-```
+```kotlin
 //data是JSONObject
 @GET("article/list/1/json")
 suspend fun getArticle(): NetResponse<Article>
@@ -508,7 +520,7 @@ suspend fun getArticle(): NetResponse<Article>
 suspend fun getWxarticleList(): NetResponse<MutableList<WxArticleResponse.DataBean>>
 ```
 使用
-```
+```kotlin
  private fun handlerResponseFormat1() {
     launch(handler) {
         val response = apiService.getArticle()
@@ -547,14 +559,12 @@ private fun handlerResponseFormat2() {
 }
 ```
 
-其他：
-* 协程 launch 和 async 的区别参考 [What is the difference between launch/join and async/await in Kotlin coroutines](https://stackoverflow.com/questions/46226518/what-is-the-difference-between-launch-join-and-async-await-in-kotlin-coroutines)
-
 参考链接：
 * [Android中用Kotlin Coroutine(协程)和Retrofit进行网络请求和取消请求](https://juejin.im/post/5cbd890bf265da03594871a5)
 * [Retrofit 2.6.0 ! 更快捷的协程体验 ！](https://juejin.im/post/5d0793616fb9a07eac05d407)
 * [Android 开发中 Kotlin Coroutines 如何优雅地处理异常](https://www.jianshu.com/p/2056d5424001)
 * [https://github.com/Kotlin/kotlinx.coroutines](https://github.com/Kotlin/kotlinx.coroutines)
 * [What is the difference between launch/join and async/await in Kotlin coroutines](https://stackoverflow.com/questions/46226518/what-is-the-difference-between-launch-join-and-async-await-in-kotlin-coroutines)
+* [retrofit2/KotlinExtensions.kt](https://github.com/square/retrofit/blob/master/retrofit/src/main/java/retrofit2/KotlinExtensions.kt)
 
 
