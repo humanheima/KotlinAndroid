@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.CoroutineErrorCallback
+import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.uiScope
 import com.hm.dumingwei.mvp.model.bean.Article
 import com.hm.dumingwei.mvp.model.bean.WxArticleResponse
 import com.hm.dumingwei.net.ApiService
@@ -35,6 +37,8 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
             .client(OkHttpClient.Builder().addInterceptor(httpLoggingInterceptor).build())
             .build().create(ApiService::class.java)
 
+    private lateinit var scope: CoroutineScope
+
     companion object {
 
         @JvmStatic
@@ -46,6 +50,11 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        scope = MainScope() + CoroutineExceptionHandler { coroutineContext, throwable ->
+            Log.d(TAG, "coroutine: error ${throwable.message}")
+        }
+
         setContentView(R.layout.activity_coroutine_retrofit_net)
 
         btnNormalRequest.setOnClickListener {
@@ -81,22 +90,24 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
         }
     }
 
+    //注释1处
+    val exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+        Log.d(TAG, "coroutine: error ${throwable.message}")
+    }
+
     private fun coroutineRequest() {
-        launch {
-            try {
-                //需要借助Retrofit.Call类的扩展方法
-                val response: WxArticleResponse = apiService.getWxarticle().awaitResponse()
-                val sb = StringBuilder("Retrofit配合协程请求：\n")
-                response.data.forEach {
-                    sb.append(it.name)
-                    sb.append("\n")
-                }
-                tvResult.text = sb.toString()
+        uiScope(object : CoroutineErrorCallback {
+            override fun onError(throwable: Throwable) {
 
-            } catch (e: Exception) {
-                Log.d(TAG, "coroutineRequest: error: ${e.message}")
             }
-
+        }).launch {
+            //需要借助Retrofit.Call类的扩展方法
+            val response: WxArticleResponse = apiService.getWxarticle().awaitResponse()
+            val sb = StringBuilder("Retrofit配合协程请求：\n")
+            response.data.forEach {
+                sb.append(it.name).append("\n")
+            }
+            tvResult.text = sb.toString()
         }
     }
 
@@ -105,34 +116,21 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
      * 2.6版本的Retrofit的使用
      */
     private fun coroutineRequest2_6() {
-        launch {
-            try {
-                val response = apiService.getWxarticle2()
-                val sb = StringBuilder("Retrofit2.6配合协程请求：\n")
-                response.data.forEach {
-                    sb.append(it.name)
-                    sb.append("\n")
-                }
-                tvResult.text = sb.toString()
-            } catch (e: Exception) {
-                Log.d(TAG, "coroutine: error ${e.message}")
-            }
+        launch(exceptionHandler) {
+            val response = apiService.getWxarticle2()
+            val sb = StringBuilder("Retrofit2.6配合协程请求：\n")
+            response.data.forEach { sb.append(it.name).append("\n") }
+            tvResult.text = sb.toString()
         }
     }
 
 
-    val handler = CoroutineExceptionHandler { _, exception ->
-        Log.d(TAG, "Caught original $exception")
-    }
 
     private fun coroutineRequest2() {
-        launch(handler) {
+        launch(exceptionHandler) {
             val response = apiService.getWxarticle2()
             val sb = StringBuilder("Retrofit2.6配合协程请求：\n")
-            response.data.forEach {
-                sb.append(it.name)
-                sb.append("\n")
-            }
+            response.data.forEach { sb.append(it.name).append("\n") }
             tvResult.text = sb.toString()
         }
     }
@@ -164,15 +162,13 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
     }
 
     private fun handlerResponseFormat1() {
-        launch(handler) {
+        launch(exceptionHandler) {
             val response = apiService.getArticle()
             if (response.success()) {
                 val article: Article? = apiService.getArticle().data
                 val sb = StringBuilder("handlerResponseFormat1：\n")
-
                 article?.datas?.forEach {
-                    sb.append(it.title)
-                    sb.append("\n")
+                    sb.append(it.title).append("\n")
                     Log.d(TAG, "handlerResponseFormat1: ${it.title}")
                 }
                 tvResult.text = sb.toString()
@@ -183,7 +179,7 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
     }
 
     private fun handlerResponseFormat2() {
-        launch(handler) {
+        launch(exceptionHandler) {
             val response = apiService.getWxarticleList()
             if (response.success()) {
                 val articleList: MutableList<WxArticleResponse.DataBean>? = apiService.getWxarticleList().data
@@ -202,16 +198,13 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
     }
 
     private fun handlerLowLevelResponseFormat1() {
-        launch(handler) {
+        launch(exceptionHandler) {
             //需要借助Retrofit.Call类的扩展方法
             val response: NetResponse<Article> =
                     apiService.getArticleLowLevelFormat1().awaitResponse()
             if (response.success()) {
                 val sb = StringBuilder("Retrofit2.6以下响应格式统一处理1：\n")
-                response.data?.datas?.forEach {
-                    sb.append(it.title)
-                    sb.append("\n")
-                }
+                response.data?.datas?.forEach { sb.append(it.title).append("\n") }
                 tvResult.text = sb.toString()
             } else {
                 Log.d(TAG, "handlerLowLevelResponseFormat1: failed ${response.errorMsg}")
@@ -220,14 +213,13 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
     }
 
     private fun handlerLowLevelResponseFormat2() {
-        launch(handler) {
+        launch(exceptionHandler) {
             val response: NetResponse<MutableList<WxArticleResponse.DataBean>> =
                     apiService.getWxarticleListLowLevelFormat2().awaitResponse()
             if (response.success()) {
                 val sb = StringBuilder("Retrofit2.6以下响应格式统一处理2：\n")
                 response.data?.forEach {
-                    sb.append(it.name)
-                    sb.append("\n")
+                    sb.append(it.name).append("\n")
                     Log.d(TAG, "handlerLowLevelResponseFormat2: ${it.name}")
                 }
                 tvResult.text = sb.toString()

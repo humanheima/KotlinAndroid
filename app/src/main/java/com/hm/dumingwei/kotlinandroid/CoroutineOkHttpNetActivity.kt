@@ -28,6 +28,8 @@ class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainSc
 
     private val TAG: String? = "CoroutineOkHttpNetActiv"
 
+    private lateinit var scope: CoroutineScope
+
     companion object {
 
         @JvmStatic
@@ -60,6 +62,10 @@ class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainSc
             tvResult.text = null
             coroutineRequest()
         }
+        btnCoroutineRequest1.setOnClickListener {
+            tvResult.text = null
+            coroutineRequest1()
+        }
         btnCoroutineRequest2.setOnClickListener {
             tvResult.text = null
             coroutineRequest2()
@@ -68,35 +74,115 @@ class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainSc
             tvResult.text = null
             coroutineRequest3()
         }
+
+        btnCatchException.setOnClickListener {
+            tvResult.text = null
+            requestCanCatchException()
+        }
+
+        btnCanNotCatchException.setOnClickListener {
+            tvResult.text = null
+            requestCanNotCatchException()
+        }
         btnCancelCoroutine.setOnClickListener {
             tvResult.text = null
             cancelCoroutine()
         }
+
+    }
+
+    //注释1处
+    val exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+        Log.d(TAG, "coroutine: error ${throwable.message}")
     }
 
     private fun coroutineRequest() {
+        //请求公众号列表
+        val request1 = Request.Builder()
+                .url("https://wanandroid.com/wxarticle/chapters/json")
+                .build()
+
+        //使用exceptionHandler
+        launch(exceptionHandler) {
+            //注释2处
+            val response = client.newCall(request1).awaitResponse()
+            //注释3处
+            val string = getString(response)
+            //合并两次请求的结果更新UI
+            tvResult.text = "协程请求 onResponse: $string"
+        }
+    }
+
+    private fun coroutineRequest1() {
+        val request1 = Request.Builder()
+                .url("https://wanandroid.com/wxarticle/chapters/json")
+                .build()
+
+        launch(exceptionHandler) {
+            //val startTime = System.currentTimeMillis()
+            //第一个网络请求
+            val response1 = client.newCall(request1).awaitResponse()
+            val string1 = getString(response1)
+            val wxArticleResponse = JsonUtilKt.instance.toObject(string1, WxArticleResponse::class.java)
+
+            //第二个网络请求依赖于第一个网络请求结果
+            val firstWxId = wxArticleResponse?.data?.get(0)?.id ?: return@launch
+            val request2 = Request.Builder()
+                    .url("https://wanandroid.com/wxarticle/list/${firstWxId}/1/json")
+                    .build()
+            val response2 = client.newCall(request2).awaitResponse()
+
+            //Log.d(TAG, "coroutineRequest: 网络请求消耗时间：${System.currentTimeMillis() - startTime}")
+            val string2 = getString(response2)
+
+            tvResult.text = "协程请求 onResponse: ${string2}"
+
+        }
+    }
+
+    private fun coroutineRequest2() {
         val request1 = Request.Builder()
                 .url("https://wanandroid.com/wxarticle/chapters/json")
                 .build()
         val request2 = Request.Builder()
                 .url("https://wanandroid.com/wxarticle/chapters/json")
                 .build()
-        launch {
-            try {
-                val startTime = System.currentTimeMillis()
-                //注释1处，发起两次请求
-                val response1 = client.newCall(request1).awaitResponse()
+        launch(exceptionHandler) {
+            val startTime = System.currentTimeMillis()
+            //注释1处，发起两次请求
+            val response1 = client.newCall(request1).awaitResponse()
+            val response2 = client.newCall(request2).awaitResponse()
 
-                val response2 = client.newCall(request2).awaitResponse()
+            Log.d(TAG, "coroutineRequest: 顺序网络请求消耗时间：${System.currentTimeMillis() - startTime}")
+            val string2 = getString(response2)
+            val string1 = getString(response1)
+            //合并两次请求的结果更新UI
+            tvResult.text = "协程请求 onResponse: ${string1 + string2}"
+        }
+    }
 
-                Log.d(TAG, "coroutineRequest: 顺序网络请求消耗时间：${System.currentTimeMillis() - startTime}")
-                val string2 = getString(response2)
-                val string1 = getString(response1)
-                //合并两次请求的结果更新UI
-                tvResult.text = "协程请求 onResponse: ${string1 + string2}"
-            } catch (e: Exception) {
-                Log.d(TAG, "coroutine: error ${e.message}")
-            }
+    /**
+     * 并发执行两个网络请求
+     */
+    private fun coroutineRequest3() {
+        val request1 = Request.Builder()
+                .url("https://wanandroid.com/wxarticle/chapters/json")
+                .build()
+        val request2 = Request.Builder()
+                .url("https://wanandroid.com/wxarticle/chapters/json")
+                .build()
+
+        launch(exceptionHandler) {
+            val startTime = System.currentTimeMillis()
+            //两次网络请求没有依赖关系，可以并发请求
+            val deferred1 = async { client.newCall(request1).awaitResponse() }
+            val deferred2 = async { client.newCall(request2).awaitResponse() }
+            val response1 = deferred1.await()
+            val response2 = deferred2.await()
+            Log.d(TAG, "coroutineRequest: 并发网络请求消耗时间：${System.currentTimeMillis() - startTime}")
+            val string1 = getString(response1)
+            val string2 = getString(response2)
+            tvResult.text = "协程请求 onResponse: ${string1 + string2}"
         }
     }
 
@@ -125,66 +211,6 @@ class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainSc
 
     }
 
-    private fun coroutineRequest2() {
-        val request1 = Request.Builder()
-                .url("https://wanandroid.com/wxarticle/chapters/json")
-                .build()
-
-        launch {
-            try {
-                //val startTime = System.currentTimeMillis()
-
-                //第一个网络请求
-                val response1 = client.newCall(request1).awaitResponse()
-                val string1 = getString(response1)
-                val wxArticleResponse = JsonUtilKt.instance.toObject(string1, WxArticleResponse::class.java)
-
-                //第二个网络请求依赖于第一个网络请求结果
-                val firstWxId = wxArticleResponse?.data?.get(0)?.id ?: return@launch
-                val request2 = Request.Builder()
-                        .url("https://wanandroid.com/wxarticle/list/${firstWxId}/1/json")
-                        .build()
-                val response2 = client.newCall(request2).awaitResponse()
-
-                //Log.d(TAG, "coroutineRequest: 网络请求消耗时间：${System.currentTimeMillis() - startTime}")
-                val string2 = getString(response2)
-
-                tvResult.text = "协程请求 onResponse: ${string2}"
-            } catch (e: Exception) {
-                Log.d(TAG, "coroutine: error ${e.message}")
-            }
-        }
-    }
-
-    private fun coroutineRequest3() {
-        val request1 = Request.Builder()
-                .url("https://wanandroid.com/wxarticle/chapters/json")
-                .build()
-        val request2 = Request.Builder()
-                .url("https://wanandroid.com/wxarticle/chapters/json")
-                .build()
-
-        launch {
-            try {
-                val startTime = System.currentTimeMillis()
-                //注释1处，使用async要重新指定协程上下文，不然会出现有些异常捕捉不到造成崩溃
-                withContext(Dispatchers.Main) {
-                    //两次网络请求没有依赖关系，可以并发请求
-                    val deferred1 = async { client.newCall(request1).awaitResponse() }
-                    val deferred2 = async { client.newCall(request2).awaitResponse() }
-                    val response1 = deferred1.await()
-                    val response2 = deferred2.await()
-                    Log.d(TAG, "coroutineRequest: 并发网络请求消耗时间：${System.currentTimeMillis() - startTime}")
-                    val string1 = getString(response1)
-                    val string2 = getString(response2)
-                    tvResult.text = "协程请求 onResponse: ${string1 + string2}"
-                }
-            } catch (e: Exception) {
-                Log.d(TAG, "coroutine: error ${e.message}")
-            }
-        }
-    }
-
     /**
      * 使用https://api.github.com/这个接口来测试 exception 是否能被捕获住
      *
@@ -194,17 +220,14 @@ class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainSc
         val request1 = Request.Builder()
                 .url("https://api.github.com/users/humanheima/events/public")
                 .build()
-        launch {
+        launch(exceptionHandler) {
             Log.d(TAG, "coroutineRequest: ${Thread.currentThread().name}")
-            try {
-                withContext(Dispatchers.Main) {
-                    val response: Deferred<Response> = async { client.newCall(request1).awaitResponse() }
-                    val string = getString(response.await())
-                    tvResult.text = "协程请求 onResponse: $string"
-                }
-            } catch (e: Exception) {
-                Log.d(TAG, "coroutine: error ${e.message}")
+            val response: Deferred<Response> = async {
+                throw IllegalAccessException("exc")
+                client.newCall(request1).awaitResponse()
             }
+            val string = getString(response.await())
+            tvResult.text = "协程请求 onResponse: $string"
         }
     }
 
@@ -220,11 +243,12 @@ class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainSc
         launch {
             Log.d(TAG, "coroutineRequest: ${Thread.currentThread().name}")
             try {
-                //withContext(Dispatchers.Main) {
-                val response: Deferred<Response> = async { client.newCall(request1).awaitResponse() }
+                val response: Deferred<Response> = async {
+                    throw IllegalAccessException("exc")
+                    client.newCall(request1).awaitResponse()
+                }
                 val string = getString(response.await())
                 tvResult.text = "协程请求 onResponse: $string"
-                //}
             } catch (e: Exception) {
                 Log.d(TAG, "coroutine: error ${e.message}")
             }

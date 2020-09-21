@@ -86,7 +86,7 @@ class CoroutineExceptionActivity : AppCompatActivity() {
         }
     }
 
-    private val errorHandle = object : CoroutineErrorListener {
+    private val errorHandle = object : CoroutineErrorCallback {
         override fun onError(throwable: Throwable) {
             Log.d(TAG, "onError: ${throwable.localizedMessage}")
         }
@@ -108,32 +108,27 @@ class CoroutineExceptionActivity : AppCompatActivity() {
 
 }
 
-val UI: CoroutineDispatcher = Dispatchers.Main
-
-interface CoroutineErrorListener {
+interface CoroutineErrorCallback {
 
     fun onError(throwable: Throwable)
 }
 
-fun uiScope(errorHandler: CoroutineErrorListener? = null) = SafeCoroutineScope(UI, errorHandler)
+fun uiScope(errorCallback: CoroutineErrorCallback? = null) = SafeCoroutineScope(Dispatchers.Main, errorCallback)
 
-class SafeCoroutineScope(context: CoroutineContext, errorHandler: CoroutineErrorListener? = null) : CoroutineScope, Closeable {
+class SafeCoroutineScope(context: CoroutineContext, errorCallback: CoroutineErrorCallback? = null) : CoroutineScope, Closeable {
 
-    override val coroutineContext: CoroutineContext = SupervisorJob() + context + UncaughtCoroutineExceptionHandler(errorHandler)
+    override val coroutineContext: CoroutineContext = SupervisorJob() + context + UncaughtCoroutineExceptionHandler(errorCallback)
 
     override fun close() {
         coroutineContext.cancelChildren()
     }
 }
 
-class UncaughtCoroutineExceptionHandler(val errorHandler: CoroutineErrorListener? = null) :
+class UncaughtCoroutineExceptionHandler(val errorCallback: CoroutineErrorCallback? = null) :
         CoroutineExceptionHandler, AbstractCoroutineContextElement(CoroutineExceptionHandler.Key) {
 
     override fun handleException(context: CoroutineContext, exception: Throwable) {
         exception.printStackTrace()
-
-        errorHandler?.let {
-            it.onError(exception)
-        }
+        errorCallback?.onError(exception)
     }
 }

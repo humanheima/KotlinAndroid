@@ -25,6 +25,9 @@ class MainActivity : AppCompatActivity() {
         btnOkHttpVsCoroutine.setOnClickListener {
             CoroutineOkHttpNetActivity.launch(this)
         }
+        btnAsyncException.setOnClickListener {
+            AsyncExceptionTestActivity.launch(this)
+        }
         btnException.setOnClickListener {
             CoroutineExceptionActivity.launch(this)
         }
