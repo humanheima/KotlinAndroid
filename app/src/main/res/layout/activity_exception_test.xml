@@ -1,44 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".AsyncExceptionTestActivity">
+    tools:context=".ExceptionTestActivity">
 
     <Button
         android:id="@+id/btnTest1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="try/catch async代码块"
+        android:text="test1"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/btnTest1Revolution"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="test1Revolution"
         android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnTest2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="其他协程所创建的协程中产生的异常总是会被传播，无论协程的 Builder 是什么"
+        android:text="test2"
         android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btnTest3"
+        android:id="@+id/btnTest2Revolution"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="使用CoroutineHandler"
+        android:text="test2Revolution"
         android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btnTest4"
+        android:id="@+id/btnTestParentJob"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="async 被用作根协程（supervisorScope 的直接子协程）"
+        android:text="测试父级任务"
         android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btnTest5"
+        android:id="@+id/btnTestAsyncThrow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="async 被用作根协程 (CoroutineScope的直接子协程)"
+        android:text="测试async 不调用 wait，async代码块中是否会抛出异常"
         android:textAllCaps="false" />
 
 </LinearLayout>

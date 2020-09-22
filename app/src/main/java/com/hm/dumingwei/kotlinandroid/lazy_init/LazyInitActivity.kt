@@ -25,6 +25,8 @@ class LazyInitActivity : AppCompatActivity() {
     fun onSayHello() {
         // Initialization would be run at here!!
         messageView.text = "Hello"
+
+        val error=OutOfMemoryError()
     }
 
 }

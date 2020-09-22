@@ -58,6 +58,9 @@ class MainActivity : AppCompatActivity() {
         btnFindViewById.setOnClickListener {
             FindViewByIdActivity.launch(this)
         }
+        btnExpTest.setOnClickListener {
+            ExceptionTestActivity.launch(this)
+        }
 
     }
 

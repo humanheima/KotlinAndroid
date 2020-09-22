@@ -241,14 +241,101 @@ class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainSc
                 .header("User-Agent", "OkHttp Example")
                 .build()
         launch {
-            Log.d(TAG, "coroutineRequest: ${Thread.currentThread().name}")
+            Log.e(TAG, "coroutineRequest: scope =  ${this}")
+            supervisorScope {
+                Log.e(TAG, "coroutineRequest: scope = ${this}")
+                val response: Deferred<Response> = async {
+                    throw IllegalAccessException("exc")
+                    client.newCall(request1).awaitResponse()
+                }
+                try {
+                    val string = getString(response.await())
+                    tvResult.text = "协程请求 onResponse: $string"
+                } catch (e: Exception) {
+                    Log.d(TAG, "coroutine: error ${e.message}")
+                }
+            }
+        }
+    }
+
+    private fun requestCanNotCatchException3() {
+        val request1 = Request.Builder()
+                .url("https://api.github.com/users/humanheima/events/public")
+                .header("User-Agent", "OkHttp Example")
+                .build()
+        //这里指定SupervisorJob不起作用
+        launch(SupervisorJob()) {
+            Log.e(TAG, "coroutineRequest: ${coroutineContext}")
+            Log.e(TAG, "coroutineRequest: ${this}")
+            //asyn返回的是一个Job不是SupervisorJob，所以async会传播异常，导致try/catch代码块不起作用
+            val response: Deferred<Response?> = async {
+                /*try {
+                } catch (e: Exception) {
+                    Log.e(TAG, "coroutine in async : error ${e.message}")
+
+                }*/
+                throw IllegalAccessException("exc")
+                //client.newCall(request1).awaitResponse()
+                null
+            }
+            try {
+                val data = response.await()
+                //val string = getString(response.await())
+                //tvResult.text = "协程请求 onResponse: $string"
+            } catch (e: Exception) {
+                Log.d(TAG, "coroutine: error ${e.message}")
+            }
+        }
+    }
+
+    private fun requestCanNotCatchException2() {
+        val request1 = Request.Builder()
+                .url("https://api.github.com/users/humanheima/events/public")
+                .header("User-Agent", "OkHttp Example")
+                .build()
+        launch {
+            Log.e(TAG, "coroutineRequest: ${coroutineContext}")
+            Log.e(TAG, "coroutineRequest: ${this}")
+            //如果 async 抛出异常，launch 就会立即抛出异常，而不会调用 .await()，所以 try/catch也抓不住异常
+            val response: Deferred<Response?> = async {
+                /*try {
+                } catch (e: Exception) {
+                    Log.e(TAG, "coroutine in async : error ${e.message}")
+
+                }*/
+                throw IllegalAccessException("exc")
+                //client.newCall(request1).awaitResponse()
+                null
+            }
+            try {
+                val data = response.await()
+                //val string = getString(response.await())
+                //tvResult.text = "协程请求 onResponse: $string"
+            } catch (e: Exception) {
+                Log.d(TAG, "coroutine: error ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * 使用https://api.github.com/这个接口来测试 exception 是否能被捕获住
+     * 这个方法抓不住异常
+     */
+    private fun requestCanNotCatchException1() {
+        val request1 = Request.Builder()
+                .url("https://api.github.com/users/humanheima/events/public")
+                .header("User-Agent", "OkHttp Example")
+                .build()
+        launch {
+            Log.e(TAG, "coroutineRequest: ${coroutineContext}")
             try {
                 val response: Deferred<Response> = async {
                     throw IllegalAccessException("exc")
                     client.newCall(request1).awaitResponse()
                 }
-                val string = getString(response.await())
-                tvResult.text = "协程请求 onResponse: $string"
+                val data = response.await()
+                //val string = getString(response.await())
+                //tvResult.text = "协程请求 onResponse: $string"
             } catch (e: Exception) {
                 Log.d(TAG, "coroutine: error ${e.message}")
             }

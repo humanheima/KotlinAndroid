@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AsyncExceptionTestActivity"></activity>
+        <activity android:name=".ExceptionTestActivity"></activity>
+        <activity android:name=".AsyncExceptionTestActivity" />
         <activity android:name="com.hm.dumingwei.dsl.KotlinDSLActivity" />
         <activity android:name=".tutorial.coroutine.CoroutineExceptionActivity" />
         <activity android:name=".CoroutineOkHttpNetActivity" />

@@ -16,6 +16,9 @@ import kotlinx.coroutines.*
  * stack overflow上提问的问题
  *
  * https://stackoverflow.com/questions/63930492/why-i-cant-use-try-catch-to-catch-exception-in-kotlin-coroutine
+ *
+ * 当 async 被用作根协程 (CoroutineScope 实例或 supervisorScope 的直接子协程) 时不会自动抛出异常，而是在您调用 .await() 时才会抛出异常。
+ *
  */
 class AsyncExceptionTestActivity : AppCompatActivity() {
 
@@ -39,11 +42,12 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
         }
 
         btnTest2.setOnClickListener {
+            //testExpHandler()
             test2()
         }
 
         btnTest3.setOnClickListener {
-            test3()
+            testExpHandler()
         }
         btnTest4.setOnClickListener {
             test4()
@@ -51,7 +55,11 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
         btnTest5.setOnClickListener {
             test5()
         }
+
     }
+
+    val uiScope = CoroutineScope(SupervisorJob())
+
 
     private val scope = MainScope()
 
@@ -65,7 +73,25 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
                 }
                 response.await()
             } catch (e: Exception) {
+                // async 中抛出的异常将不会在这里被捕获
+                // 但是异常会被传播和传递到 scope
                 Log.d(TAG, "test: error ${e.message}")
+            }
+        }
+    }
+
+    private fun test2() {
+        val scope = CoroutineScope(Job())
+        //scope.launch {
+        scope.async {
+            val response: Deferred<String> = async {
+                Log.d(TAG, "test2: in async block")
+                throw IllegalStateException("在async中抛出异常")
+            }
+            try {
+                response.await()
+            } catch (e: Exception) {
+                Log.d(TAG, "test2: caught error ${e.message}")
             }
         }
     }
@@ -73,14 +99,14 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
     /**
      * 异常被CoroutineExceptionHandler捕获
      */
-    private fun test2() {
+    private fun testExpHandler() {
         val expHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
             Log.d(TAG, "test1: expHandler caught exception : ${throwable.message}")
         }
         val expHandler1 = CoroutineExceptionHandler { coroutineContext, throwable ->
             Log.d(TAG, "test1: expHandler1 caught exception : ${throwable.message}")
         }
-        scope.launch(expHandler) {
+        scope.launch (expHandler) {
             Log.d(TAG, "test1: launch")
             try {
                 val response: Deferred<String> = async(expHandler1) {
@@ -95,47 +121,44 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
         }
     }
 
-    private fun test3() {
-        try {
-            scope.launch {
-                Log.d(TAG, "test1: launch")
-                val response: Deferred<String> = async {
-                    Log.d(TAG, "test1: in async block")
-                    throw IllegalStateException("在async中抛出异常")
-                }
-                response.await()
-            }
-        } catch (e: Exception) {
-            Log.d(TAG, "test1: error ${e.message}")
-        }
-    }
-
+    /**
+     * async 被用作根协程（supervisorScope 的直接子协程）时不会自动抛出异常，而是在您调用 .await() 时才会抛出异常。
+     */
     private fun test4() {
-        try {
-            scope.launch {
-                Log.d(TAG, "test1: launch")
-                val response: Deferred<String> = async {
-                    Log.d(TAG, "test1: in async block")
-                    throw IllegalStateException("在async中抛出异常")
-                }
-                response.await()
-            }
-        } catch (e: Exception) {
-            Log.d(TAG, "test1: error ${e.message}")
-        }
-    }
-
-    private fun test5() {
+        val scope = CoroutineScope(SupervisorJob())
         scope.launch {
-            Log.d(TAG, "test: launch")
-            try {
-                val response: Deferred<String> = GlobalScope.async {
-                    Log.d(TAG, "test: in async block")
+            //supervisorScope 的直接子协程
+            supervisorScope {
+                val deferred: Deferred<String> = async {
                     throw IllegalStateException("an IllegalStateException")
                 }
-                response.await()
+
+                try {
+                    deferred.await()
+                } catch (e: Exception) {
+                    // 处理 async 中抛出的异常
+                    Log.d(TAG, "test4: caught error ${e.message}")
+                }
+            }
+        }
+    }
+
+    /**
+     * 当 async 被用作根协程 (CoroutineScope的直接子协程) 时不会自动抛出异常，而是在您调用 .await() 时才会抛出异常。
+     */
+    private fun test5() {
+        val scope = CoroutineScope(Job())
+        scope.launch {
+            val childScope = CoroutineScope(Job())
+            //childScope的直接子协程
+            val deferred: Deferred<String> = childScope.async {
+                throw IllegalStateException("an IllegalStateException")
+            }
+            try {
+                deferred.await()
             } catch (e: Exception) {
-                Log.d(TAG, "test: error ${e.message}")
+                //async 中抛出的异常将不会在这里被捕获
+                Log.d(TAG, "test4: caught error ${e.message}")
             }
         }
     }
