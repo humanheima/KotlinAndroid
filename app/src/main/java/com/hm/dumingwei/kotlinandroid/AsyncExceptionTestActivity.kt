@@ -41,6 +41,10 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
             test()
         }
 
+        btnTestAsync1.setOnClickListener {
+            asyncAsRootCoroutine1()
+        }
+
         btnTest2.setOnClickListener {
             //testExpHandler()
             test2()
@@ -63,6 +67,9 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
 
     private val scope = MainScope()
 
+    /**
+     * async 不是用作根协程，所以其中 async代码块中的异常捕获不住
+     */
     private fun test() {
         scope.launch {
             Log.d(TAG, "test: launch${coroutineContext}")
@@ -71,7 +78,7 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
                     Log.d(TAG, "test: in async block")
                     throw IllegalStateException("an IllegalStateException")
                 }
-                response.await()
+                //response.await()
             } catch (e: Exception) {
                 // async 中抛出的异常将不会在这里被捕获
                 // 但是异常会被传播和传递到 scope
@@ -80,12 +87,30 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * async 用作根协程，所以其中 async代码块中的异常可以捕获住
+     */
+    private fun asyncAsRootCoroutine1() {
+        scope.async {
+            try {
+                Log.d(TAG, "asyncAsRootCoroutine1: in async block")
+                throw IllegalStateException("an IllegalStateException")
+                //response.await()
+            } catch (e: Exception) {
+                Log.d(TAG, "asyncAsRootCoroutine1: error ${e.message}")
+            }
+        }
+    }
+
     private fun test2() {
         val scope = CoroutineScope(Job())
+        //注释1处
         //scope.launch {
         scope.async {
             val response: Deferred<String> = async {
                 Log.d(TAG, "test2: in async block")
+                //注释1处，使用launch的时候会传播这个异常，造成crash
+                //注释1处，使用async的时候不会传播这个异常，不会crash
                 throw IllegalStateException("在async中抛出异常")
             }
             try {
@@ -106,7 +131,7 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
         val expHandler1 = CoroutineExceptionHandler { coroutineContext, throwable ->
             Log.d(TAG, "test1: expHandler1 caught exception : ${throwable.message}")
         }
-        scope.launch (expHandler) {
+        scope.launch(expHandler) {
             Log.d(TAG, "test1: launch")
             try {
                 val response: Deferred<String> = async(expHandler1) {

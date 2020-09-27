@@ -14,10 +14,17 @@
         android:textAllCaps="false" />
 
     <Button
+        android:id="@+id/btnTestAsync1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="asyn代码块用作根协程"
+        android:textAllCaps="false" />
+
+    <Button
         android:id="@+id/btnTest2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="其他协程所创建的协程中产生的异常总是会被传播，无论协程的 Builder 是什么"
+        android:text="launch传播异常，async不传播异常"
         android:textAllCaps="false" />
 
     <Button
