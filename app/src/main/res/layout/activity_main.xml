@@ -1,86 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/btnRetrofitAndCoroutine"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Retrofit 和 协程"
-        android:textAllCaps="false" />
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btnOkHttpVsCoroutine"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="OkHttp 和 协程"
-        android:textAllCaps="false" />
+        <Button
+            android:id="@+id/btnRetrofitAndCoroutine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Retrofit 和 协程"
+            android:textAllCaps="false" />
 
-    <Button
-        android:id="@+id/btnAsyncException"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="测试在协程中的Async异常处理"
-        android:textAllCaps="false" />
+        <Button
+            android:id="@+id/btnOkHttpVsCoroutine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OkHttp 和 协程"
+            android:textAllCaps="false" />
 
-    <Button
-        android:id="@+id/btnException"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="测试在协程中的异常处理"
-        android:textAllCaps="false" />
+        <Button
+            android:id="@+id/btnAsyncException"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试在协程中的Async异常处理"
+            android:textAllCaps="false" />
 
-    <Button
-        android:id="@+id/btnTestWidget"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="测试在父类中使用子类布局中声明的控件"
-        android:textAllCaps="false" />
+        <Button
+            android:id="@+id/btnException"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试在协程中的异常处理"
+            android:textAllCaps="false" />
 
-    <Button
-        android:id="@+id/btnRetrofit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/retrofit"
-        android:textAllCaps="false" />
+        <Button
+            android:id="@+id/btnTestWidget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试在父类中使用子类布局中声明的控件"
+            android:textAllCaps="false" />
 
-    <Button
-        android:id="@+id/btnPreventClick"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/kotlin_prevent_repeat_click" />
+        <Button
+            android:id="@+id/btnRetrofit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/retrofit"
+            android:textAllCaps="false" />
 
-    <Button
-        android:id="@+id/btnBaseCoroutine"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/coroutine_base"
-        android:textAllCaps="false" />
+        <Button
+            android:id="@+id/btnPreventClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/kotlin_prevent_repeat_click" />
 
-    <!--使用Coroutine做-->
-    <Button
-        android:id="@+id/btnCoroutineRequest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="使用Coroutine请求网络"
-        android:textAllCaps="false" />
+        <Button
+            android:id="@+id/btnBaseCoroutine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coroutine_base"
+            android:textAllCaps="false" />
 
-    <Button
-        android:id="@+id/btnFindViewById"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Kotlin findViewById实现原理"
-        android:textAllCaps="false" />
+        <!--使用Coroutine做-->
+        <Button
+            android:id="@+id/btnCoroutineRequest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="使用Coroutine请求网络"
+            android:textAllCaps="false" />
 
-    <Button
-        android:id="@+id/btnExpTest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="官方文章异常处理学习"
-        android:textAllCaps="false" />
+        <Button
+            android:id="@+id/btnFindViewById"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Kotlin findViewById实现原理"
+            android:textAllCaps="false" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/btnExpTest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="官方文章异常处理学习"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btnSuspendFunction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试挂起函数"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+
+</ScrollView>

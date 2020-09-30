@@ -5,8 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.CoroutineErrorCallback
-import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.uiScope
 import com.hm.dumingwei.mvp.model.bean.Article
 import com.hm.dumingwei.mvp.model.bean.WxArticleResponse
 import com.hm.dumingwei.net.ApiService
@@ -96,11 +94,7 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
     }
 
     private fun coroutineRequest() {
-        uiScope(object : CoroutineErrorCallback {
-            override fun onError(throwable: Throwable) {
-
-            }
-        }).launch {
+        launch {
             //需要借助Retrofit.Call类的扩展方法
             val response: WxArticleResponse = apiService.getWxarticle().awaitResponse()
             val sb = StringBuilder("Retrofit配合协程请求：\n")
@@ -123,7 +117,6 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
             tvResult.text = sb.toString()
         }
     }
-
 
 
     private fun coroutineRequest2() {

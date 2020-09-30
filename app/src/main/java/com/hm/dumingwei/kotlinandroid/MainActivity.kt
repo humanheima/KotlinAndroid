@@ -62,6 +62,9 @@ class MainActivity : AppCompatActivity() {
             ExceptionTestActivity.launch(this)
         }
 
+        btnSuspendFunction.setOnClickListener {
+            SuspendFunctionActivity.launch(this)
+        }
     }
 
     fun checkPermission() {
