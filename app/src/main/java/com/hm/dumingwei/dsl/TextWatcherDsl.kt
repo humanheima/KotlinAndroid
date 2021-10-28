@@ -47,7 +47,7 @@ inline fun EditText.onTextChange(textWatcher: TextWatcherDsl.() -> Unit): TextWa
     return watcher
 }
 
-inline fun EditText.onTextChange(textWatcher: TextWatcherDsl): TextWatcher {
-    addTextChangedListener(textWatcher)
-    return textWatcher
-}
+//inline fun EditText.onTextChange(textWatcher: TextWatcherDsl): TextWatcher {
+//    addTextChangedListener(textWatcher)
+//    return textWatcher
+//}

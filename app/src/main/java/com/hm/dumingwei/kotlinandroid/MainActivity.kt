@@ -3,6 +3,8 @@ package com.hm.dumingwei.kotlinandroid
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import com.hm.dumingwei.JsonUtilKt
 import com.hm.dumingwei.kotlinandroid.findviewbyid.FindViewByIdActivity
 import com.hm.dumingwei.kotlinandroid.handbook.eleven.SecondActivity
 import com.hm.dumingwei.kotlinandroid.handbook.thirteen.GithubEventActivity
@@ -13,6 +15,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    private val TAG: String = "MainActivity"
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -20,6 +25,11 @@ class MainActivity : AppCompatActivity() {
         btnRetrofitAndCoroutine.setOnClickListener {
             CoroutineRetrofitNetActivity.launch(this)
         }
+
+        btnTestJson.setOnClickListener {
+            GsonTestActivity.launch(this)
+        }
+
         btnOkHttpVsCoroutine.setOnClickListener {
             CoroutineOkHttpNetActivity.launch(this)
         }

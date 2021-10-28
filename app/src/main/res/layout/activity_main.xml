@@ -12,6 +12,13 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/btnTestJson"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试Json"
+            android:textAllCaps="false" />
+
+        <Button
             android:id="@+id/btnRetrofitAndCoroutine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

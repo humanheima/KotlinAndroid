@@ -51,11 +51,11 @@ class CoroutineBaseActivity : AppCompatActivity() {
     }
 
     /**
-     * 这个例子说明了协程中的代码自动地切换到其他线程之后又自动地切换回了主线程！
+     * 通过指定CoroutineContext为Dispatchers.IO在线程池里执行耗时代码
      */
     private fun test1() {
         Log.d(TAG, "test1: start ${Thread.currentThread().name}")
-        GlobalScope.launch(Dispatchers.Main) {
+        GlobalScope.launch(Dispatchers.IO) {
             delay(1000L)
             Log.d(TAG, "test1: Hello,World! ${Thread.currentThread().name}")
 

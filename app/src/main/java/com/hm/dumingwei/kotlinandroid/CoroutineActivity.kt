@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import com.hm.dumingwei.mvp.presenter.CoroutinePresenter
 import com.hm.dumingwei.mvp.view.CoroutineView
@@ -41,6 +42,23 @@ class CoroutineActivity : AppCompatActivity(), View.OnClickListener, CoroutineVi
         btnSecond.setOnClickListener(this)
         btnThird.setOnClickListener(this)
         btnForth.setOnClickListener(this)
+
+        testTryCatch { string ->
+            Log.i(TAG, "onCreate: string = " + string)
+        }
+    }
+
+    private val TAG: String = "CoroutineActivity"
+
+    //var errorAction: ((exception: Exception) -> Unit)? = null
+
+    private fun testTryCatch(action: ((msg: String) -> Unit)? = null, errorAction: ((msg: String) -> Unit)? = null) {
+        try {
+            action?.invoke("")
+        } catch (e: Exception) {
+            Log.i(TAG, "testTryCatch: ")
+            errorAction?.invoke(e.message ?: "")
+        }
     }
 
 
