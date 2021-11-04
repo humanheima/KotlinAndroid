@@ -57,12 +57,6 @@ class GsonTestActivity : AppCompatActivity(), View.OnClickListener {
         //val jsonString = "{\"showable\": \"true\"," + "\"moreThan\": \"null\"," + "\"totalCoinOfYesterday\": 1903," + "\"extraCoin\": 300}"
         //val jsonString = "{\"showable\": \"true\"," + "\"moreThan\": \"30.01%\"," + "\"extraCoin\": 300}"
         val jsonString = "{\"show\": \"true\"," + "\"number\": \"10086\"," + "\"string\":\"hello world\" }"
-
-        Log.i(TAG, "onCreate: json = ${jsonString.trim()}")
-
-        val info = JsonUtilKt.instance.toObject(jsonString, JsonModel::class.java)
-
-        Log.i(TAG, "onCreate: info = $info")
     }
 
     override fun onClick(v: View) {
@@ -82,57 +76,63 @@ class GsonTestActivity : AppCompatActivity(), View.OnClickListener {
             R.id.btnTest2 -> {
 
                 //缺少一个boolean类型变量
-                val jsonString = "{\"number\": 10086," + "\"string\":\"hello world\" }"
+                val jsonString = "{\"number\":10086," + "\"string\":\"hello world\"}"
 
                 val model = JsonUtilKt.instance.toObject(jsonString, JsonModel::class.java)
 
                 Log.i(TAG, "onClick: 缺少一个boolean类型变量：mode = $model")
+                Log.i(TAG, "onClick: 缺少一个boolean类型变量：mode.show = ${model?.show}")
 
 
                 //boolean类型变量为null
-                val jsonString1 = "{\"show\": null," + "\"number\": 10086," + "\"string\":\"hello world\" }"
+                val jsonString1 = "{\"show\":null," + "\"number\":10086," + "\"string\":\"hello world\" }"
 
                 val model1 = JsonUtilKt.instance.toObject(jsonString1, JsonModel::class.java)
 
                 Log.i(TAG, "onClick: boolean类型变量为null：mode = $model1")
 
+                Log.i(TAG, "onClick: boolean类型变量为null：mode.show = ${model1?.show}")
 
             }
             R.id.btnTest3 -> {
 
                 //缺少一个int类型变量
-                val jsonString = "{\"show\": \"true\"," + "\"string\":\"hello world\" }"
+                val jsonString = "{\"show\": \"true\"," + "\"string\":\"hello world\"}"
 
                 val model = JsonUtilKt.instance.toObject(jsonString, JsonModel::class.java)
 
                 Log.i(TAG, "onClick: 缺少一个int类型变量：mode = $model")
+                Log.i(TAG, "onClick: 缺少一个int类型变量：mode.number = ${model?.number}")
 
                 //int类型变量为null
-                val jsonString1 = "{\"show\": \"true\"," + "\"number\": null," + "\"string\":\"hello world\" }"
+                val jsonString1 = "{\"show\": \"true\"," + "\"number\":null," + "\"string\":\"hello world\"}"
 
                 val model1 = JsonUtilKt.instance.toObject(jsonString1, JsonModel::class.java)
 
                 Log.i(TAG, "onClick: int类型变量为null：mode = $model1")
-
+                Log.i(TAG, "onClick: int类型变量为null：mode.number = ${model1?.number}")
 
             }
             R.id.btnTest4 -> {
 
                 //缺少一个引用类型变量
-                val jsonString = "{\"show\": \"true\"," + "\"number\": 10086}"
+                val jsonString = "{\"show\": \"true\"," + "\"number\":10086}"
 
                 val model = JsonUtilKt.instance.toObject(jsonString, JsonModel::class.java)
 
                 Log.i(TAG, "onClick: 缺少一个引用类型变量：mode = $model")
 
+                Log.i(TAG, "onClick: 缺少一个引用类型变量：mode.string = ${model?.string}")
 
                 //引用类型变量为null
-                val jsonString1 = "{\"show\": \"true\"," + "\"number\": \"10086\"," + "\"string\":null }"
+                val jsonString1 = "{\"show\": \"true\"," + "\"number\": \"10086\"," + "\"string\":null}"
 
                 val model1 = JsonUtilKt.instance.toObject(jsonString1, JsonModel::class.java)
-
                 Log.i(TAG, "onClick: 引用类型变量为null：mode = $model1")
-
+                Log.i(TAG, "onClick: 引用类型变量为null：mode.string = ${model1?.string}")
+                if (model1 != null) {
+                    Log.i(TAG, "onClick: 引用类型变量为null：mode.string.length = ${model1.string?.length}")
+                }
 
             }
         }

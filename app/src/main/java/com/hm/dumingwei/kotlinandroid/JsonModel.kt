@@ -5,9 +5,16 @@ package com.hm.dumingwei.kotlinandroid
  *
  * Desc:
  */
-data class JsonModel(
-        var show: Boolean,
-        var number: Int,
-        var string: String
-)
 
+//data class JsonModel(
+//        var show: Boolean,
+//        var number: Int,
+//        var string: String?
+//)
+
+
+data class JsonModel(
+        var show: Boolean?,
+        var number: Int?,
+        var string: String?
+)
