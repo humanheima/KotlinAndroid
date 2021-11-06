@@ -1,13 +1,29 @@
+定义一个JsonModel类。
+
+### JsonModel类所有字段都声明为非空类型
 ```kotlin
 data class JsonModel(
         var show: Boolean,
         var number: Int,
         var string: String
 )
+```
 
+使用Gson类进行反序列化，Gson版本2.8.5
+
+```kotlin
+fun <T> toObject(json: String?, classOfT: Class<T>): T? {
+    return try {
+        gson.fromJson(json, classOfT)
+    } catch (e: Exception) {
+        Log.d(TAG, "toObject: error ${e.message}")
+        null
+    }
+}
 ```
 
 我们看一下反编译出来的Java类，省略不必要的部分。
+
 ```java
 public final class JsonModel {
 
@@ -49,18 +65,35 @@ public final class JsonModel {
       Intrinsics.checkParameterIsNotNull(var1, "<set-?>");
       this.string = var1;
    }
-
-   
 }
 ```
 
 Boolean类型和Int类型都被编译成了Java原始类型。
 
-1. 如果反序列化的Json字符串没有`show`字段和`number`字段，那么最后反序列化出来的JsonModel对象，`show = false `，`number = 0 `。
+**这里注意一下**：Kotlin的Boolean、Byte、Short、Int、Long、Float、Double声明为非空类型的时候，最终反编译出来的Java类都会变成对应Java中原始类型：boolean、byte、short、int、long、float、double。而原始类型是都有默认值的，不会为null。
 
-Json字符串没有`show`字段和`number`字段，那么在反序列化的时候就不会处理这两个字段。
+接下来开始探索：
 
-ReflectiveTypeAdapterFactory.Adapter
+完整的json字符串
+
+```kotlin
+
+val jsonString = "{\"show\": \"true\",\"number\": 10086,\"string\":\"hello world\"}"
+
+```
+
+
+#### json字符串中缺少Java中原始类型对应的字段
+
+如果反序列化的Json字符串没有`show`字段和`number`字段，那么最后反序列化出来的JsonModel对象，`show = false `，`number = 0 `。
+
+```kotlin
+
+val jsonString = "{\"string\":\"hello world\"}"
+
+```
+
+ReflectiveTypeAdapterFactory.Adapter的read方法。
 
 ```java
 @Override 
@@ -74,9 +107,9 @@ public T read(JsonReader in) throws IOException {
 
       try {
         in.beginObject();
+        //注释1处，循环判断是否还有下一个值需要处理。
         while (in.hasNext()) {
           String name = in.nextName();
-          //注释1处，boundFields中就没有`show`字段和`number`字段，所以不会处理。
           BoundField field = boundFields.get(name);
           if (field == null || !field.deserialized) {
             in.skipValue();
@@ -95,10 +128,23 @@ public T read(JsonReader in) throws IOException {
 }
 ```
 
+注释1处，循环判断是否还有下一个值需要处理。处理完string字段以后，json字符串中就没有其他要处理的字段了，也就是说，在Json字符串没有`show`字段和`number`字段的时候，根本不会处理这两个字段，所以都是默认值，`show = false `，`number = 0 `。
+
+
+#### json字符串中Java中原始类型对应的字段都为null。
+
+如果反序列化的Json字符串`show`字段和`number`字段都为`null`，那么最后反序列化出来的JsonModel对象，`show = false `，`number = 0 `。
+
+```kotlin
+
+val jsonString1 = "{\"show\": null,\"number\":null,\"string\":\"hello world\"}"
+
+```
 
 
 
-2. 如果反序列化的Json字符串`show`字段和`number`字段都为`null`，那么最后反序列化出来的JsonModel对象，`show = false `，`number = 0 `。
+
+ReflectiveTypeAdapterFactory.Adapter的read方法的注释2处，使用BoundField读取字段。
 
 
 ```java
@@ -144,9 +190,9 @@ private ReflectiveTypeAdapterFactory.BoundField createBoundField(
   }
 ```
 
-注释1处，如果是boolean类型，对应的变量是TypeAdapters.BOOLEAN，如果值为null的话，TypeAdapters.BOOLEAN返回的值是null。
+注释1处，如果是boolean类型，对应的变量是TypeAdapters.BOOLEAN，如果值为null的话，TypeAdapters.BOOLEAN返回的值是null。如果是int类型，对应的变量是TypeAdapters.INTEGER，如果值为null的话，TypeAdapters.INTEGER返回的值是null。
 
-注释2处，条件不满足，所以boolean类型变量如果对应的json字符串为null的话，最终反序列化的结果是false。
+注释2处，条件不满足，所以Java原始类型变量如果对应的json字符串为null的话，最终反序列化的结果就是默认值，`show = false`，`number = 0`。
 
 ```java
 public static final TypeAdapter<Boolean> BOOLEAN = new TypeAdapter<Boolean>() {
@@ -169,6 +215,9 @@ public static final TypeAdapter<Boolean> BOOLEAN = new TypeAdapter<Boolean>() {
     }
 };
 ```
+
+注释1处，boolean类型变量，如果从json字符串中读取的值是null，返回null
+
 
 int类型的适配器同理，如果从json字符串中读取的值是null，返回null，那么int类型的变量默认值就是0。
 
@@ -193,9 +242,44 @@ public static final TypeAdapter<Number> INTEGER = new TypeAdapter<Number>() {
   };
 ```
 
-3. 如果反序列化的Json字符串`string`字段缺失，或者为`null`，那么最后反序列化出来的JsonModel对象，`string = false `。
-也就是说，对于一个引用类型的变量，如果Json字符串中没有改变量对应的值，或者值为null，那么反序列化出来的引用类型变量的值就是null。
-所以我们应该把引用类型的变量声明为可空类型。如下所示：
+#### json字符串中引用类型缺失
+
+如果反序列化的Json字符串`string`字段缺失，那么在反序列化过程中就不会处理`string`字段，那么`string`字段就是默认值，在这个例子中我们没有给`string`字段赋默认值，所以默认值就是null，那么最后反序列化出来的JsonModel对象，`string = null `。
+
+#### json字符串中引用类型为null
+
+如果反序列化的Json字符串`string`字段为`null`，那么最后反序列化出来的JsonModel对象，`string = null `。
+
+TypeAdapters.STRING
+
+```java
+ public static final TypeAdapter<String> STRING = new TypeAdapter<String>() {
+    @Override
+    public String read(JsonReader in) throws IOException {
+      JsonToken peek = in.peek();
+      if (peek == JsonToken.NULL) {
+        //注释1处，值为null，返回null
+        in.nextNull();
+        return null;
+      }
+      /* coerce booleans to strings for backwards compatibility */
+      if (peek == JsonToken.BOOLEAN) {
+        return Boolean.toString(in.nextBoolean());
+      }
+      return in.nextString();
+    }
+    @Override
+    public void write(JsonWriter out, String value) throws IOException {
+      out.value(value);
+    }
+  };
+```
+
+注释1处，值为null，返回null。
+
+也就是说，对于一个引用类型的变量，如果Json字符串中该变量对应的值为null，那么反序列化出来的引用类型变量的值就是null。注意：并且会覆盖该变量的默认值。在这个例子中，我们如果在声明的时候为`string`字符指定一个默认值，但是当`json`字符串中`string`字段对应的值为`null`的时候，最后序列化出来的结果仍然为`null`。
+
+所以正确的做法是把引用类型的变量声明为可空类型。如下所示：
 
 ```kotlin
 data class JsonModel(
@@ -204,7 +288,6 @@ data class JsonModel(
         var string: String?
 )
 ```
-
 
 ### 把Java中对应的原始类型声明为可空类型
 
@@ -265,4 +348,7 @@ public final class JsonModel {
 1. 如果反序列化的Json字符串没有`show`字段和`number`字段，那么最后反序列化出来的JsonModel对象，`show = null `，`number = null `。
 
 2. 如果反序列化的Json字符串`show`字段和`number`字段都为`null`，那么最后反序列化出来的JsonModel对象，`show = null `，`number = null `。
+
+这种声明类型是不合适的，将可以不为null的Java基本数据类型，变为了可空的包装类型，使用的时候会增加空判断的逻辑。
+
 

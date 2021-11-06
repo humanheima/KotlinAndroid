@@ -9,7 +9,7 @@ package com.hm.dumingwei.kotlinandroid
 //data class JsonModel(
 //        var show: Boolean,
 //        var number: Int,
-//        var string: String?
+//        var string: String="你好呀"
 //)
 
 
