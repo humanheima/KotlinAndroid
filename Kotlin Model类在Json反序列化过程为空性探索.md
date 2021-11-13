@@ -242,9 +242,59 @@ public static final TypeAdapter<Number> INTEGER = new TypeAdapter<Number>() {
   };
 ```
 
-#### json字符串中引用类型缺失
+#### Json字符串中引用类型缺失
 
 如果反序列化的Json字符串`string`字段缺失，那么在反序列化过程中就不会处理`string`字段，那么`string`字段就是默认值，在这个例子中我们没有给`string`字段赋默认值，所以默认值就是null，那么最后反序列化出来的JsonModel对象，`string = null `。
+
+注意：
+注意：
+注意：
+
+如果我们如下所示，声明JsonModel类，给string字段默认赋值为"你好呀"。
+```kotlin
+data class JsonModel(
+        var show: Boolean,
+        var number: Int,
+        var string: String="你好呀"
+)
+```
+反编译后的Java类，省略无关部分。
+
+```java
+public final class JsonModel {
+   private boolean show;
+   private int number;
+   @NotNull
+   private String string;
+
+   public JsonModel(boolean show, int number, @NotNull String string) {
+      Intrinsics.checkParameterIsNotNull(string, "string");
+      super();
+      this.show = show;
+      this.number = number;
+      this.string = string;
+   }
+
+   // $FF: synthetic method
+   public JsonModel(boolean var1, int var2, String var3, int var4, DefaultConstructorMarker var5) {
+      if ((var4 & 4) != 0) {
+         var3 = "你好呀";
+      }
+
+      this(var1, var2, var3);
+   }
+
+}
+```
+
+我们看到，JsonModel类没有默认的`无参构造函数`。并且只有当调用JsonModel三个参数的构造函数的时候，才会给string字段赋值。
+
+
+当反序列化的Json字符串`string`字段缺失，反序列化后string字段会默认是"你好呀"吗？并不是。Gson在反序列化过程中要么通过调用`无参构造函数`来构造对象，或者通过`UnsafeAllocator`类，在不调用构造函数的情况下地分配对象。
+
+所以如上声明方式，即使给string字段默认赋值为"你好呀"。在Json字符串string字段缺失的情况下，反序列化之后，string字段值依然为null。这里一定要注意！！！
+
+
 
 #### json字符串中引用类型为null
 
