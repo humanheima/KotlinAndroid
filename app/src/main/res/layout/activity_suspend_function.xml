@@ -1,16 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".SuspendFunctionActivity">
 
+
     <EditText
         android:id="@+id/etText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+
+    <TextView
+        android:id="@+id/tvText1"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#eeeeee" />
+
+    <TextView
+        android:id="@+id/tvText2"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:background="#eeeeee" />
+
+    <Button
+        android:id="@+id/btnSuspend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="常规的阻塞式" />
+
+    <Button
+        android:id="@+id/btnUnSuspend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="非阻塞式挂起" />
 
     <Button
         android:id="@+id/btnInvoke"
