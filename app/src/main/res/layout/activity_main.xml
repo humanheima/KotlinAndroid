@@ -12,6 +12,13 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/btnTestDialogPriority"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试弹窗优先级"
+            android:textAllCaps="false" />
+
+        <Button
             android:id="@+id/btnTestJson"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

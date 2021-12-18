@@ -16,6 +16,7 @@ import kotlinx.coroutines.*
  */
 class CoroutineBaseActivity : AppCompatActivity() {
 
+
     private val TAG = "CoroutineBaseActivity"
 
     companion object {
@@ -48,6 +49,8 @@ class CoroutineBaseActivity : AppCompatActivity() {
             delay(1000L)
             Log.d(TAG, "test0: Hello,World!")
         })
+
+
     }
 
     /**
@@ -92,9 +95,9 @@ class CoroutineBaseActivity : AppCompatActivity() {
         }
     }
 
-    suspend fun loadLots(){
+    suspend fun loadLots() {
         coroutineScope {
-            repeat(1_000){
+            repeat(1_000) {
                 launch {
                     //Log.d(TAG, "loadLots: ")
                     //todo network

@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_first_widget.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 /**
  * Created by dumingwei on 2019/4/15.
@@ -39,5 +41,14 @@ abstract class BaseWidgetActivity : AppCompatActivity() {
             }
         }
     }
+
+    fun main() {
+        GlobalScope.launch {
+            println("Hello world! GlobalScope current Thread ${Thread.currentThread().name}")
+        }
+        println("Hello world! current Thread  ${Thread.currentThread().name}")
+        Thread.sleep(1000)
+    }
+
 
 }

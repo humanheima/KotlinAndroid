@@ -3,14 +3,13 @@ package com.hm.dumingwei.kotlinandroid
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import com.hm.dumingwei.JsonUtilKt
 import com.hm.dumingwei.kotlinandroid.findviewbyid.FindViewByIdActivity
 import com.hm.dumingwei.kotlinandroid.handbook.eleven.SecondActivity
 import com.hm.dumingwei.kotlinandroid.handbook.thirteen.GithubEventActivity
 import com.hm.dumingwei.kotlinandroid.testbase.FirstWidgetActivity
 import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.CoroutineBaseActivity
 import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.CoroutineExceptionActivity
+import com.hm.dumingwei.temp.DialogPriorityTestActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -21,6 +20,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        btnTestDialogPriority.setOnClickListener {
+            DialogPriorityTestActivity.launch(this)
+        }
 
         btnRetrofitAndCoroutine.setOnClickListener {
             CoroutineRetrofitNetActivity.launch(this)
