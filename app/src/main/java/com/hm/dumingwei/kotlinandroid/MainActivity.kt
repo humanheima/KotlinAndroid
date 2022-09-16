@@ -21,6 +21,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        btnTestRemoveMsg.setOnClickListener {
+            TestFuncActivity.launch(this)
+        }
         btnTestDialogPriority.setOnClickListener {
             DialogPriorityTestActivity.launch(this)
         }
@@ -87,7 +90,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun <T> support(apiVersion: Int, function: () -> T, default: () -> T): T =
-            if (versionOrHigher(apiVersion)) function() else default()
+        if (versionOrHigher(apiVersion)) function() else default()
 
     private fun versionOrHigher(version: Int) = Build.VERSION.SDK_INT >= version
 }

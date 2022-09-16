@@ -38,6 +38,10 @@ fun testAnotherRun(): Unit {
 
 ### let 和 run 的功能给是不是重复了？
 
+### 匿名扩展函数
+
+
+
 
 
 

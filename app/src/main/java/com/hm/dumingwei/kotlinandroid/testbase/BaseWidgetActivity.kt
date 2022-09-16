@@ -19,6 +19,7 @@ abstract class BaseWidgetActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
         init()
+        main()
     }
 
     abstract fun getLayoutId(): Int
