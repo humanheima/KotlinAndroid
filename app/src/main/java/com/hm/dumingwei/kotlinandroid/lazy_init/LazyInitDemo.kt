@@ -6,7 +6,7 @@ package com.hm.dumingwei.kotlinandroid.lazy_init
  */
 class LazyInitDemo {
 
-    val myName: String by lazy{"John"}
+    val myName: String by lazy { "John" }
 
     private fun getNameFromPreference(): () -> String = { "John" }
 

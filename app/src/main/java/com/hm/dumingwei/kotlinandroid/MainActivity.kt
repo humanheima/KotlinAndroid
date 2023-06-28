@@ -3,6 +3,8 @@ package com.hm.dumingwei.kotlinandroid
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.View
+import com.hm.dumingwei.kotlinandroid.bytest.PropertiesByActivity
 import com.hm.dumingwei.kotlinandroid.findviewbyid.FindViewByIdActivity
 import com.hm.dumingwei.kotlinandroid.handbook.eleven.SecondActivity
 import com.hm.dumingwei.kotlinandroid.handbook.thirteen.GithubEventActivity
@@ -78,6 +80,14 @@ class MainActivity : AppCompatActivity() {
 
         btnSuspendFunction.setOnClickListener {
             SuspendFunctionActivity.launch(this)
+        }
+    }
+
+    fun onClick(view: View){
+        when(view.id){
+            R.id.btnTestPropertiesDelegate ->{
+                PropertiesByActivity.launch(this)
+            }
         }
     }
 

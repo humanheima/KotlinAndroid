@@ -12,6 +12,14 @@
             android:orientation="vertical">
 
         <Button
+                android:id="@+id/btnTestPropertiesDelegate"
+                android:layout_width="match_parent"
+                android:onClick="onClick"
+                android:layout_height="wrap_content"
+                android:text="测试属性委托"
+                android:textAllCaps="false" />
+
+        <Button
                 android:id="@+id/btnTestRemoveMsg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

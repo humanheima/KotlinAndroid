@@ -1,3 +1,4 @@
+Kotlin by lazy 实现原理
 
 ```kotlin
 class LazyInitActivity : AppCompatActivity() {
@@ -45,6 +46,7 @@ public final class LazyInitDemo {
 }
 
 ```
+
 * 生成了一个`Lazy`类型的变量`myName$delegate`，就是我们的属性名加上后缀`$delegate`。
 * `LazyKt.lazy()`负责执行`by lazy`后面的lambda表达式。
 * 在LazyInitDemo的构造函数中，将`LazyKt.lazy()`的执行结果赋值给`myName$delegate`变量。
@@ -53,6 +55,7 @@ public final class LazyInitDemo {
 调用`getMyName()`方法，内部会调用`myName$delegate`的`getValue()`方法。
 
 LazyJVM.kt中定义的
+
 ```kotlin
 public actual fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer)
 
@@ -67,6 +70,7 @@ public actual fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): La
 }
 
 ```
+
 参考链接：
 * [How Kotlin’s delegated properties and lazy-initialization work](https://medium.com/til-kotlin/how-kotlins-delegated-properties-and-lazy-initialization-work-552cbad8be60)
 * [[译]带你揭开Kotlin中属性代理和懒加载语法糖衣](https://zhuanlan.zhihu.com/p/65914552)
