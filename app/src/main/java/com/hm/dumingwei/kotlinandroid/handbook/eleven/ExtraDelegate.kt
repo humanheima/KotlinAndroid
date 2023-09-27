@@ -1,7 +1,7 @@
 package com.hm.dumingwei.kotlinandroid.handbook.eleven
 
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import kotlin.reflect.KProperty
 
 /**
@@ -23,14 +23,15 @@ class ExtraDelegate<out T>(private val extraName: String, private val defaultVal
     }
 }
 
-fun <T> extraDelegate(extra: String, defaultValue: T): ExtraDelegate<T> = ExtraDelegate(extra, defaultValue)
+fun <T> extraDelegate(extra: String, defaultValue: T): ExtraDelegate<T> =
+    ExtraDelegate(extra, defaultValue)
 
 fun extraDelegate(extra: String) = extraDelegate(extra, null)
 
 @Suppress("UNCHECKED_CAST")
 private fun <T> getExtra(oldExtra: T?, extraName: String, thisRef: AppCompatActivity): T? = oldExtra
-        ?: thisRef.intent?.extras?.get(extraName) as T?
+    ?: thisRef.intent?.extras?.get(extraName) as T?
 
 @Suppress("UNCHECKED_CAST")
 private fun <T> getExtra(oldExtra: T?, extraName: String, thisRef: Fragment): T? = oldExtra
-        ?: thisRef.arguments?.get(extraName) as T?
+    ?: thisRef.arguments?.get(extraName) as T?

@@ -2,7 +2,7 @@ package com.hm.dumingwei.kotlinandroid
 
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import com.hm.dumingwei.kotlinandroid.bytest.PropertiesByActivity
 import com.hm.dumingwei.kotlinandroid.findviewbyid.FindViewByIdActivity

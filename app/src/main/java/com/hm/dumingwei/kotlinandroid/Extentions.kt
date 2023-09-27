@@ -2,13 +2,13 @@ package com.hm.dumingwei.kotlinandroid
 
 import android.app.Activity
 import android.graphics.drawable.Drawable
-import android.support.annotation.ColorInt
 import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.ColorInt
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.actor

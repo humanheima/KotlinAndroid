@@ -3,10 +3,10 @@ package com.hm.dumingwei.dsl
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.hm.dumingwei.kotlinandroid.R
 import kotlinx.android.synthetic.main.activity_kotlin_dsl.*
 

@@ -1,17 +1,17 @@
 package com.hm.dumingwei.kotlinandroid.findviewbyid
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.recyclerview.widget.RecyclerView
 import com.hm.dumingwei.kotlinandroid.R
 import kotlinx.android.synthetic.main.item_recyclerview.view.*
 
 class MyAdapter(
-        val context: Context,
-        val data: List<String>
+    val context: Context,
+    val data: List<String>
 ) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

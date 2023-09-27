@@ -3,7 +3,7 @@ package com.hm.dumingwei.kotlinandroid
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import com.hm.dumingwei.mvp.model.bean.Article
 import com.hm.dumingwei.mvp.model.bean.WxArticleResponse

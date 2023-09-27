@@ -5,13 +5,11 @@ import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.support.annotation.NonNull;
 import android.util.Log;
-
+import androidx.annotation.NonNull;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.util.Util;
-
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 
@@ -57,7 +55,9 @@ public class GlideRoundTransform extends BitmapTransformation {
     }
 
     private Bitmap roundCrop(BitmapPool pool, Bitmap source) {
-        if (source == null) return null;
+        if (source == null) {
+            return null;
+        }
         Bitmap result = pool.get(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(result);
         Paint paint = new Paint();
