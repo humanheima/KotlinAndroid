@@ -175,7 +175,8 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
         launch(exceptionHandler) {
             val response = apiService.getWxarticleList()
             if (response.success()) {
-                val articleList: MutableList<WxArticleResponse.DataBean>? = apiService.getWxarticleList().data
+                //val articleList: MutableList<WxArticleResponse.DataBean>? = apiService.getWxarticleList().data
+                val articleList: MutableList<WxArticleResponse.DataBean>? = response.data
                 val sb = StringBuilder("handlerResponseFormat2：\n")
                 articleList?.forEach {
                     sb.append(it.name)
