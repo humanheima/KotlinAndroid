@@ -1,51 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".AsyncExceptionTestActivity">
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".AsyncExceptionTestActivity">
 
     <Button
-        android:id="@+id/btnTest1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="try/catch async代码块"
-        android:textAllCaps="false" />
+            android:id="@+id/btnTestOthers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试其他"
+            android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btnTestAsync1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="asyn代码块用作根协程"
-        android:textAllCaps="false" />
+            android:id="@+id/btnTest1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="try/catch async代码块"
+            android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btnTest2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="launch传播异常，async不传播异常"
-        android:textAllCaps="false" />
+            android:id="@+id/btnTestAsync1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="asyn代码块用作根协程"
+            android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btnTest3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="使用CoroutineHandler"
-        android:textAllCaps="false" />
+            android:id="@+id/btnTest2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="launch传播异常，async不传播异常"
+            android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btnTest4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="async 被用作根协程（supervisorScope 的直接子协程）"
-        android:textAllCaps="false" />
+            android:id="@+id/btnTest3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="使用CoroutineHandler"
+            android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btnTest5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="async 被用作根协程 (CoroutineScope的直接子协程)"
-        android:textAllCaps="false" />
+            android:id="@+id/btnTest4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="async 被用作supervisorScope 的直接子协程"
+            android:textAllCaps="false" />
+
+    <Button
+            android:id="@+id/btnTest5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="async 被用作CoroutineScope的直接子协程"
+            android:textAllCaps="false" />
 
 </LinearLayout>

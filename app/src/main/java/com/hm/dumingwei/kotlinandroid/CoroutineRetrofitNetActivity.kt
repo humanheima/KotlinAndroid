@@ -88,6 +88,10 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
         }
     }
 
+    /**
+     * 子协程 CoroutineExceptionHandler 不起作用，
+     * SupervisorJob 内部的写成也会捕获异常，不会使用 CoroutineExceptionHandler
+     */
     //注释1处
     val exceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
         Log.d(TAG, "coroutine: error ${throwable.message}")

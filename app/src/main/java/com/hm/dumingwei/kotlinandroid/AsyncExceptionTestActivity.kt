@@ -5,8 +5,25 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_async_exception_test.*
-import kotlinx.coroutines.*
+import kotlinx.android.synthetic.main.activity_async_exception_test.btnTest1
+import kotlinx.android.synthetic.main.activity_async_exception_test.btnTest2
+import kotlinx.android.synthetic.main.activity_async_exception_test.btnTest3
+import kotlinx.android.synthetic.main.activity_async_exception_test.btnTest4
+import kotlinx.android.synthetic.main.activity_async_exception_test.btnTest5
+import kotlinx.android.synthetic.main.activity_async_exception_test.btnTestAsync1
+import kotlinx.android.synthetic.main.activity_async_exception_test.btnTestOthers
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 
 /**
  * Created by dumingwei on 2020/9/16
@@ -37,6 +54,8 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_async_exception_test)
 
+        btnTestOthers.setOnClickListener {
+        }
         btnTest1.setOnClickListener {
             test()
         }
@@ -78,11 +97,11 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
                     Log.d(TAG, "test: in async block")
                     throw IllegalStateException("an IllegalStateException")
                 }
-                //response.await()
+                response.await()
             } catch (e: Exception) {
                 // async 中抛出的异常将不会在这里被捕获
-                // 但是异常会被传播和传递到 scope
-                Log.d(TAG, "test: error ${e.message}")
+                // 但是异常会被传播和传递到 scope，这里能够打印出来
+                Log.d(TAG, "catch test: error ${e.message}")
             }
         }
     }
@@ -94,10 +113,13 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
         scope.async {
             try {
                 Log.d(TAG, "asyncAsRootCoroutine1: in async block")
-                throw IllegalStateException("an IllegalStateException")
-                //response.await()
+                val response: Deferred<String> = async {
+                    Log.d(TAG, "test: in async block")
+                    throw IllegalStateException("an IllegalStateException")
+                }
+                response.await()
             } catch (e: Exception) {
-                Log.d(TAG, "asyncAsRootCoroutine1: error ${e.message}")
+                Log.d(TAG, "catch asyncAsRootCoroutine1: error ${e.message} ")
             }
         }
     }
@@ -134,6 +156,7 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
         scope.launch(expHandler) {
             Log.d(TAG, "test1: launch")
             try {
+                //这里的异常会被expHandler捕获，expHandler1不会捕获
                 val response: Deferred<String> = async(expHandler1) {
                     Log.d(TAG, "test1: in async block")
                     throw IllegalStateException("在async中抛出异常")
@@ -147,11 +170,11 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
     }
 
     /**
-     * async 被用作根协程（supervisorScope 的直接子协程）时不会自动抛出异常，而是在您调用 .await() 时才会抛出异常。
+     * async 被用作supervisorScope 的直接子协程时不会自动抛出异常，而是在您调用 .await() 时才会抛出异常。
      */
     private fun test4() {
-        val scope = CoroutineScope(SupervisorJob())
-        scope.launch {
+
+        GlobalScope.launch(Dispatchers.Main) {
             //supervisorScope 的直接子协程
             supervisorScope {
                 val deferred: Deferred<String> = async {
@@ -183,8 +206,81 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
                 deferred.await()
             } catch (e: Exception) {
                 //async 中抛出的异常将不会在这里被捕获
-                Log.d(TAG, "test4: caught error ${e.message}")
+                Log.d(TAG, "test5: caught error ${e.message}")
             }
+        }
+    }
+
+    /**
+     * supervisorScope 内部一个子协程失败，不影响另外一个子协程
+     */
+    private fun test6() {
+        GlobalScope.launch(Dispatchers.Main) {
+
+            val stringBuilder = StringBuilder()
+
+            var string1: String? = null
+            var string2: String? = null
+
+            //supervisorScope 的直接子协程
+            // supervisorScope {
+
+            // }
+
+            try {
+                supervisorScope {
+
+                    throw IllegalStateException("test4: an IllegalStateException")
+                    val deferred1: Deferred<String> = async {
+                        //throw IllegalStateException("第1个请求，an IllegalStateException")
+                        "第一个请求结果成功"
+                    }
+
+                    try {
+                        string1 = deferred1.await()
+                    } catch (e: Exception) {
+                        // 处理 async 中抛出的异常
+                        Log.d(TAG, "test4: caught error ${e.message}")
+                    }
+
+                    val deferred2: Deferred<String> = async {
+                        throw IllegalStateException("第2个请求，an IllegalStateException")
+                        "第二个请求结果成功"
+                    }
+
+                    try {
+                        string2 = deferred2.await()
+                    } catch (e: Exception) {
+                        // 处理 async 中抛出的异常
+                        Log.d(TAG, "test4: caught error ${e.message}")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.d(TAG, "test4: caught supervisorScope error ${e.message}")
+            }
+
+            Log.i(TAG, "test4: string1 = $string1")
+            Log.i(TAG, "test4: string2 = $string2")
+            if (string1 == null) {
+                Log.i(TAG, "test4: 第一个请求失败，string1 is null，直接return了")
+                return@launch
+            }
+
+            stringBuilder.append("string1 = $string1").append(";")
+            stringBuilder.append("string2 = $string2")
+            Log.i(TAG, "test4: stringBuilder = ${stringBuilder.toString()}")
+
+            //Note: 这种写法也可以
+//            val deferred: Deferred<String> = async(SupervisorJob()) {
+//                throw IllegalStateException("an IllegalStateException")
+//            }
+//
+//            try {
+//                deferred.await()
+//            } catch (e: Exception) {
+//                // 处理 async 中抛出的异常
+//                Log.d(TAG, "test4: caught error ${e.message}")
+//            }
         }
     }
 

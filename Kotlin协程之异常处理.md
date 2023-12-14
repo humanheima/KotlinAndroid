@@ -4,6 +4,10 @@
 
 ## 异常传播
 
+传播异常，是指能够将异常主动往外抛到启动顶层协程所在的线程。因为launch启动的协程，是不会将异常抛到线程，所以try-catch无法捕捉，为了让这种异常能够捕捉到。协程引入了CoroutineExceptionHandler
+
+链接：https://www.jianshu.com/p/39f40e42b57b
+
 协程构建器有两种类型：自动传播异常([launch](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/launch.html) 和 [actor](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.channels/actor.html))或者将异常暴露给用户([async](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/async.html) 和 [produce](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.channels/produce.html))。当使用这两种构建器构建根协程的时候，前一种类型的构建器将异常视为未捕获的异常，类似Java的`Thread.uncaughtExceptionHandler`。后一种类型的构建器则依赖用户来消费异常，例如通过 [await](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-deferred/await.html) or [receive](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.channels/-receive-channel/receive.html)。
 
 举个例子，我们使用 [GlobalScope](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-global-scope/index.html)来创建根协程。
