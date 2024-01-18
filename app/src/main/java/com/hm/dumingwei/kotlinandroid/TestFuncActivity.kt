@@ -22,7 +22,7 @@ class TestFuncActivity : AppCompatActivity() {
 
     val handler: Handler = object : Handler() {
 
-        override fun handleMessage(msg: Message?) {
+        override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
         }
     }

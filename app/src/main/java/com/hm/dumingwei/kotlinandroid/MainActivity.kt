@@ -2,8 +2,8 @@ package com.hm.dumingwei.kotlinandroid
 
 import android.os.Build
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.hm.dumingwei.kotlinandroid.bytest.PropertiesByActivity
 import com.hm.dumingwei.kotlinandroid.findviewbyid.FindViewByIdActivity
 import com.hm.dumingwei.kotlinandroid.handbook.eleven.SecondActivity
@@ -12,7 +12,21 @@ import com.hm.dumingwei.kotlinandroid.testbase.FirstWidgetActivity
 import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.CoroutineBaseActivity
 import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.CoroutineExceptionActivity
 import com.hm.dumingwei.temp.DialogPriorityTestActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.btnAsyncException
+import kotlinx.android.synthetic.main.activity_main.btnBaseCoroutine
+import kotlinx.android.synthetic.main.activity_main.btnCoroutineRequest
+import kotlinx.android.synthetic.main.activity_main.btnException
+import kotlinx.android.synthetic.main.activity_main.btnExpTest
+import kotlinx.android.synthetic.main.activity_main.btnFindViewById
+import kotlinx.android.synthetic.main.activity_main.btnOkHttpVsCoroutine
+import kotlinx.android.synthetic.main.activity_main.btnPreventClick
+import kotlinx.android.synthetic.main.activity_main.btnRetrofit
+import kotlinx.android.synthetic.main.activity_main.btnRetrofitAndCoroutine
+import kotlinx.android.synthetic.main.activity_main.btnSuspendFunction
+import kotlinx.android.synthetic.main.activity_main.btnTestDialogPriority
+import kotlinx.android.synthetic.main.activity_main.btnTestJson
+import kotlinx.android.synthetic.main.activity_main.btnTestRemoveMsg
+import kotlinx.android.synthetic.main.activity_main.btnTestWidget
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +36,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        btnBaseCoroutine.withTrigger().onClick {
+            CoroutineBaseActivity.launch(this)
+        }
 
         btnTestRemoveMsg.setOnClickListener {
             TestFuncActivity.launch(this)
@@ -64,9 +82,6 @@ class MainActivity : AppCompatActivity() {
             CoroutineActivity.launch(this)
         }*/
 
-        btnBaseCoroutine.onClick {
-            CoroutineBaseActivity.launch(this)
-        }
         btnCoroutineRequest.onClick {
             CoroutineActivity.launch(this)
         }
@@ -83,9 +98,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun onClick(view: View){
-        when(view.id){
-            R.id.btnTestPropertiesDelegate ->{
+    fun onClick(view: View) {
+        when (view.id) {
+            R.id.btnTestPropertiesDelegate -> {
                 PropertiesByActivity.launch(this)
             }
         }
