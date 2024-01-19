@@ -4,6 +4,7 @@ import com.hm.dumingwei.mvp.model.bean.Article
 import com.hm.dumingwei.mvp.model.bean.WxArticleResponse
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 /**
  * Created by dumingwei on 2020/4/24.
@@ -27,6 +28,13 @@ interface ApiService {
 
     @GET("wxarticle/chapters/json")
     suspend fun getWxarticle2(): WxArticleResponse
+
+    @GET("wxarticle/chapters/json")
+    suspend fun getWxarticle2Temp(
+        @Query("params1") params1: String?,
+        @Query("params2") params2: Int?,
+        @Query("params3") params3: String?,
+    ): WxArticleResponse
 
     /**
      * retrofit2.6.0以上格式统一处理
