@@ -191,6 +191,7 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
         launch(exceptionHandler) {
             val response = apiService.getWxarticle2()
             val sb = StringBuilder("Retrofit2.6配合协程请求：\n")
+
             response.data.forEach { sb.append(it.name).append("\n") }
             tvResult.text = sb.toString()
         }
@@ -269,7 +270,13 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
                 apiService.getArticleLowLevelFormat1().awaitResponse()
             if (response.success()) {
                 val sb = StringBuilder("Retrofit2.6以下响应格式统一处理1：\n")
-                response.data?.datas?.forEach { sb.append(it.title).append("\n") }
+                response.data?.datas?.forEach {
+
+
+                    sb.append(
+                    it.title).append("\n") }
+
+
                 tvResult.text = sb.toString()
             } else {
                 Log.d(TAG, "handlerLowLevelResponseFormat1: failed ${response.errorMsg}")

@@ -2,6 +2,7 @@ package com.hm.dumingwei.kotlinandroid
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.hm.dumingwei.kotlinandroid.bytest.PropertiesByActivity
@@ -42,7 +43,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnTestRemoveMsg.setOnClickListener {
-            TestFuncActivity.launch(this)
+            Log.i(TAG, "onCreate: " + (null as String?))
+
+            //TestFuncActivity.launch(this)
         }
         btnTestDialogPriority.setOnClickListener {
             DialogPriorityTestActivity.launch(this)

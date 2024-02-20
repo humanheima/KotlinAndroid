@@ -47,4 +47,12 @@
         android:text="测试4" />
 
 
+    <Button
+            android:id="@+id/btn_test_kotlin_copy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试Kotlin 拷贝"
+            android:textAllCaps="false" />
+
+
 </LinearLayout>
