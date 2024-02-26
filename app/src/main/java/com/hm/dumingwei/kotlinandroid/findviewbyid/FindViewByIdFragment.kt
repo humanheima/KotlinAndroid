@@ -6,9 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-
-import com.hm.dumingwei.kotlinandroid.R
-import kotlinx.android.synthetic.main.fragment_find_view_by_id.*
+import com.hm.dumingwei.kotlinandroid.databinding.FragmentFindViewByIdBinding
 
 /**
  * Crete by dumingwei on 2020-03-09
@@ -18,24 +16,29 @@ import kotlinx.android.synthetic.main.fragment_find_view_by_id.*
 class FindViewByIdFragment : Fragment() {
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-
-        //tvInFragment.text = "fragment中的字符串"
-        return inflater.inflate(R.layout.fragment_find_view_by_id, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        tvInFragment.text = "fragment中的字符串"
-    }
-
     companion object {
 
         @JvmStatic
         fun newInstance() = FindViewByIdFragment()
     }
+
+    private lateinit var binding: FragmentFindViewByIdBinding
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        binding = FragmentFindViewByIdBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
+        // Inflate the layout for this fragment
+
+        //tvInFragment.text = "fragment中的字符串"
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.tvInFragment.text = "fragment中的字符串"
+    }
+
 }

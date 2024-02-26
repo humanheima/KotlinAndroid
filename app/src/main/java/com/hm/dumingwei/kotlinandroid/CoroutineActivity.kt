@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.hm.dumingwei.kotlinandroid.databinding.ActivityCoroutineBinding
 import com.hm.dumingwei.mvp.presenter.CoroutinePresenter
 import com.hm.dumingwei.mvp.view.CoroutineView
-import kotlinx.android.synthetic.main.activity_coroutine.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 
@@ -31,17 +31,20 @@ class CoroutineActivity : AppCompatActivity(), View.OnClickListener, CoroutineVi
         }
     }
 
+    private lateinit var binding: ActivityCoroutineBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_coroutine)
+        binding = ActivityCoroutineBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         presenter = CoroutinePresenter(this)
         presenter.attachView(this)
 
-        btnFirst.setOnClickListener(this)
-        btnSecond.setOnClickListener(this)
-        btnThird.setOnClickListener(this)
-        btnForth.setOnClickListener(this)
+        binding.btnFirst.setOnClickListener(this)
+        binding.btnSecond.setOnClickListener(this)
+        binding.btnThird.setOnClickListener(this)
+        binding.btnForth.setOnClickListener(this)
 
         testTryCatch { string ->
             Log.i(TAG, "onCreate: string = " + string)
@@ -84,7 +87,7 @@ class CoroutineActivity : AppCompatActivity(), View.OnClickListener, CoroutineVi
     }
 
     override fun setResult(text: String) {
-        tvResult.text = text
+        binding.tvResult.text = text
     }
 
     override fun onDestroy() {

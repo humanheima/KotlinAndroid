@@ -2,10 +2,9 @@ package com.hm.dumingwei.kotlinandroid.testbase
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
-import com.hm.dumingwei.kotlinandroid.R
+import com.hm.dumingwei.kotlinandroid.databinding.ActivitySecondWidgetBinding
 
-class SecondWidgetActivity : BaseWidgetActivity() {
+class SecondWidgetActivity : BaseWidgetActivity<ActivitySecondWidgetBinding>() {
 
     companion object {
 
@@ -14,7 +13,9 @@ class SecondWidgetActivity : BaseWidgetActivity() {
             context.startActivity(intent)
         }
     }
-    override fun getLayoutId(): Int {
-        return R.layout.activity_second_widget
+
+    override fun createBinding(): ActivitySecondWidgetBinding {
+        return ActivitySecondWidgetBinding.inflate(layoutInflater)
     }
+
 }

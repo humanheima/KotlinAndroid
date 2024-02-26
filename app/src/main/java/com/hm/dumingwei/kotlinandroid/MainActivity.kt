@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.hm.dumingwei.kotlinandroid.bytest.PropertiesByActivity
+import com.hm.dumingwei.kotlinandroid.databinding.ActivityMainBinding
 import com.hm.dumingwei.kotlinandroid.findviewbyid.FindViewByIdActivity
 import com.hm.dumingwei.kotlinandroid.handbook.eleven.SecondActivity
 import com.hm.dumingwei.kotlinandroid.handbook.thirteen.GithubEventActivity
@@ -13,71 +14,59 @@ import com.hm.dumingwei.kotlinandroid.testbase.FirstWidgetActivity
 import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.CoroutineBaseActivity
 import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.CoroutineExceptionActivity
 import com.hm.dumingwei.temp.DialogPriorityTestActivity
-import kotlinx.android.synthetic.main.activity_main.btnAsyncException
-import kotlinx.android.synthetic.main.activity_main.btnBaseCoroutine
-import kotlinx.android.synthetic.main.activity_main.btnCoroutineRequest
-import kotlinx.android.synthetic.main.activity_main.btnException
-import kotlinx.android.synthetic.main.activity_main.btnExpTest
-import kotlinx.android.synthetic.main.activity_main.btnFindViewById
-import kotlinx.android.synthetic.main.activity_main.btnOkHttpVsCoroutine
-import kotlinx.android.synthetic.main.activity_main.btnPreventClick
-import kotlinx.android.synthetic.main.activity_main.btnRetrofit
-import kotlinx.android.synthetic.main.activity_main.btnRetrofitAndCoroutine
-import kotlinx.android.synthetic.main.activity_main.btnSuspendFunction
-import kotlinx.android.synthetic.main.activity_main.btnTestDialogPriority
-import kotlinx.android.synthetic.main.activity_main.btnTestJson
-import kotlinx.android.synthetic.main.activity_main.btnTestRemoveMsg
-import kotlinx.android.synthetic.main.activity_main.btnTestWidget
 
 class MainActivity : AppCompatActivity() {
 
     private val TAG: String = "MainActivity"
 
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        btnBaseCoroutine.withTrigger().onClick {
+        binding.btnBaseCoroutine.withTrigger().onClick {
             CoroutineBaseActivity.launch(this)
         }
 
-        btnTestRemoveMsg.setOnClickListener {
+        binding.btnTestRemoveMsg.setOnClickListener {
             Log.i(TAG, "onCreate: " + (null as String?))
 
             //TestFuncActivity.launch(this)
         }
-        btnTestDialogPriority.setOnClickListener {
+        binding.btnTestDialogPriority.setOnClickListener {
             DialogPriorityTestActivity.launch(this)
         }
 
-        btnRetrofitAndCoroutine.setOnClickListener {
+        binding.btnRetrofitAndCoroutine.setOnClickListener {
             CoroutineRetrofitNetActivity.launch(this)
         }
 
-        btnTestJson.setOnClickListener {
+        binding.btnTestJson.setOnClickListener {
             GsonTestActivity.launch(this)
         }
 
-        btnOkHttpVsCoroutine.setOnClickListener {
+        binding.btnOkHttpVsCoroutine.setOnClickListener {
             CoroutineOkHttpNetActivity.launch(this)
         }
-        btnAsyncException.setOnClickListener {
+        binding.btnAsyncException.setOnClickListener {
             AsyncExceptionTestActivity.launch(this)
         }
-        btnException.setOnClickListener {
+        binding.btnException.setOnClickListener {
             CoroutineExceptionActivity.launch(this)
         }
 
-        btnRetrofit.withTrigger().click {
+        binding.btnRetrofit.withTrigger().click {
             GithubEventActivity.launch(this)
         }
-        btnPreventClick.withTrigger().click {
+        binding.btnPreventClick.withTrigger().click {
             //toastSHortly("prevent repeat click")
             SecondActivity.launch(this, "dumingwei", 27)
         }
 
-        btnTestWidget.setOnClickListener {
+        binding.btnTestWidget.setOnClickListener {
             FirstWidgetActivity.launch(this)
         }
 
@@ -85,18 +74,18 @@ class MainActivity : AppCompatActivity() {
             CoroutineActivity.launch(this)
         }*/
 
-        btnCoroutineRequest.onClick {
+        binding.btnCoroutineRequest.onClick {
             CoroutineActivity.launch(this)
         }
 
-        btnFindViewById.setOnClickListener {
+        binding.btnFindViewById.setOnClickListener {
             FindViewByIdActivity.launch(this)
         }
-        btnExpTest.setOnClickListener {
+        binding.btnExpTest.setOnClickListener {
             ExceptionTestActivity.launch(this)
         }
 
-        btnSuspendFunction.setOnClickListener {
+        binding.btnSuspendFunction.setOnClickListener {
             SuspendFunctionActivity.launch(this)
         }
     }

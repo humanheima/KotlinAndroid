@@ -3,11 +3,11 @@ package com.hm.dumingwei.kotlinandroid
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
-import kotlinx.android.synthetic.main.activity_suspend_function.*
+import androidx.appcompat.app.AppCompatActivity
+import com.hm.dumingwei.kotlinandroid.databinding.ActivitySuspendFunctionBinding
 import kotlinx.coroutines.*
 
 /**
@@ -33,11 +33,15 @@ class SuspendFunctionActivity : AppCompatActivity() {
         }
     }
 
+    private lateinit var binding: ActivitySuspendFunctionBinding
+
     private var scope: CoroutineScope = CoroutineScope(Dispatchers.Main)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_suspend_function)
+        binding = ActivitySuspendFunctionBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         tvText1 = findViewById(R.id.tvText1)
         tvText2 = findViewById(R.id.tvText2)
@@ -59,7 +63,7 @@ class SuspendFunctionActivity : AppCompatActivity() {
             tvText2.text = "兴百姓苦，亡百姓苦"
 
         }
-        btnInvoke.setOnClickListener {
+        binding.btnInvoke.setOnClickListener {
             invokeMethod()
         }
     }
@@ -85,7 +89,7 @@ class SuspendFunctionActivity : AppCompatActivity() {
         //默认协程是在主线程运行的，因为我们的scope指定的调度器是Dispatchers.Main
         scope.launch(Dispatchers.Main) {
             val result = getString()
-            etText.setText(result)
+            binding.etText.setText(result)
         }
     }
 

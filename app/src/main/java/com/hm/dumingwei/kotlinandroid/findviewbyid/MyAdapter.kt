@@ -4,10 +4,11 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.hm.dumingwei.kotlinandroid.R
-import kotlinx.android.synthetic.main.item_recyclerview.view.*
+import com.hm.dumingwei.kotlinandroid.databinding.ItemRecyclerviewBinding
 
 class MyAdapter(
     val context: Context,
@@ -15,13 +16,13 @@ class MyAdapter(
 ) : RecyclerView.Adapter<MyAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_recyclerview, parent, false)
-        return ViewHolder(view)
+        val binding = ItemRecyclerviewBinding.inflate(LayoutInflater.from(context), parent, false)
+        return ViewHolder(binding.root)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         //原来的使用方式
-        holder.itemView.tvInRv.text = data[position]
+        holder.tvInRv.text = data[position]
         //启用LayoutContainer扩展功能后的使用方式
         //holder.tvInRv.text = data[position]
         holder.itemView.setOnClickListener {
@@ -34,6 +35,7 @@ class MyAdapter(
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val tvInRv: TextView = view.findViewById<TextView>(R.id.tvInRv)
 
     }
 

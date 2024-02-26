@@ -5,21 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.hm.dumingwei.kotlinandroid.databinding.ActivityCoroutineRetrofitNetBinding
 import com.hm.dumingwei.mvp.model.bean.Article
 import com.hm.dumingwei.mvp.model.bean.WxArticleResponse
 import com.hm.dumingwei.net.ApiService
 import com.hm.dumingwei.net.HttpLoggingInterceptor
 import com.hm.dumingwei.net.NetResponse
 import com.hm.dumingwei.net.awaitResponse
-import kotlinx.android.synthetic.main.activity_coroutine_retrofit_net.btnCoroutineRequest
-import kotlinx.android.synthetic.main.activity_coroutine_retrofit_net.btnCoroutineRequest1
-import kotlinx.android.synthetic.main.activity_coroutine_retrofit_net.btnCoroutineRequest2
-import kotlinx.android.synthetic.main.activity_coroutine_retrofit_net.btnHandleLowLevelResponseFormat1
-import kotlinx.android.synthetic.main.activity_coroutine_retrofit_net.btnHandleLowLevelResponseFormat2
-import kotlinx.android.synthetic.main.activity_coroutine_retrofit_net.btnHandleResponseFormat1
-import kotlinx.android.synthetic.main.activity_coroutine_retrofit_net.btnHandleResponseFormat2
-import kotlinx.android.synthetic.main.activity_coroutine_retrofit_net.btnNormalRequest
-import kotlinx.android.synthetic.main.activity_coroutine_retrofit_net.tvResult
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -68,6 +60,8 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
         }
     }
 
+    private lateinit var binding: ActivityCoroutineRetrofitNetBinding
+
     // 创建一个信任所有证书的 TrustManager
     val trustAllCerts = arrayOf<TrustManager>(
         object : X509TrustManager {
@@ -87,6 +81,9 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityCoroutineRetrofitNetBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         val sslContext = SSLContext.getInstance("SSL")
         sslContext.init(null, trustAllCerts, SecureRandom())
@@ -116,37 +113,35 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
             Log.d(TAG, "coroutine: error ${throwable.message}")
         }
 
-        setContentView(R.layout.activity_coroutine_retrofit_net)
-
-        btnNormalRequest.setOnClickListener {
-            tvResult.text = null
+        binding.btnNormalRequest.setOnClickListener {
+            binding.tvResult.text = null
             normalRequest()
         }
 
-        btnCoroutineRequest.setOnClickListener {
-            tvResult.text = null
+        binding.btnCoroutineRequest.setOnClickListener {
+            binding.tvResult.text = null
             coroutineRequest()
             //coroutineRequest1()
 
         }
-        btnCoroutineRequest1.setOnClickListener {
-            tvResult.text = null
+        binding.btnCoroutineRequest1.setOnClickListener {
+            binding.tvResult.text = null
             coroutineRequest2_6()
         }
-        btnCoroutineRequest2.setOnClickListener {
+        binding.btnCoroutineRequest2.setOnClickListener {
             coroutineRequest2()
         }
 
-        btnHandleResponseFormat1.setOnClickListener {
+        binding.btnHandleResponseFormat1.setOnClickListener {
             handlerResponseFormat1()
         }
-        btnHandleResponseFormat2.setOnClickListener {
+        binding.btnHandleResponseFormat2.setOnClickListener {
             handlerResponseFormat2()
         }
-        btnHandleLowLevelResponseFormat1.setOnClickListener {
+        binding.btnHandleLowLevelResponseFormat1.setOnClickListener {
             handlerLowLevelResponseFormat1()
         }
-        btnHandleLowLevelResponseFormat2.setOnClickListener {
+        binding.btnHandleLowLevelResponseFormat2.setOnClickListener {
             handlerLowLevelResponseFormat2()
         }
     }
@@ -169,7 +164,7 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
             response.data.forEach {
                 sb.append(it.name).append("\n")
             }
-            tvResult.text = sb.toString()
+            binding.tvResult.text = sb.toString()
         }
     }
 
@@ -182,7 +177,7 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
             val response = apiService.getWxarticle2Temp("", 1, null)
             val sb = StringBuilder("Retrofit2.6配合协程请求：\n")
             response.data.forEach { sb.append(it.name).append("\n") }
-            tvResult.text = sb.toString()
+            binding.tvResult.text = sb.toString()
         }
     }
 
@@ -193,7 +188,7 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
             val sb = StringBuilder("Retrofit2.6配合协程请求：\n")
 
             response.data.forEach { sb.append(it.name).append("\n") }
-            tvResult.text = sb.toString()
+            binding.tvResult.text = sb.toString()
         }
     }
 
@@ -220,7 +215,7 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
                         sb.append(it.name)
                         sb.append("\n")
                     }
-                    tvResult.text = sb.toString()
+                    binding.tvResult.text = sb.toString()
                 }
             }
         })
@@ -236,7 +231,7 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
                     sb.append(it.title).append("\n")
                     Log.d(TAG, "handlerResponseFormat1: ${it.title}")
                 }
-                tvResult.text = sb.toString()
+                binding.tvResult.text = sb.toString()
             } else {
                 Log.d(TAG, "handlerResponseFormat1: failed ${response.errorMsg}")
             }
@@ -255,7 +250,7 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
                     sb.append("\n")
                     Log.d(TAG, "handlerResponseFormat2: ${it.name}")
                 }
-                tvResult.text = sb.toString()
+                binding.tvResult.text = sb.toString()
             } else {
                 Log.d(TAG, "handlerResponseFormat2: failed ${response.errorMsg}")
 
@@ -274,10 +269,12 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
 
 
                     sb.append(
-                    it.title).append("\n") }
+                        it.title
+                    ).append("\n")
+                }
 
 
-                tvResult.text = sb.toString()
+                binding.tvResult.text = sb.toString()
             } else {
                 Log.d(TAG, "handlerLowLevelResponseFormat1: failed ${response.errorMsg}")
             }
@@ -294,7 +291,7 @@ class CoroutineRetrofitNetActivity : AppCompatActivity(), CoroutineScope by Main
                     sb.append(it.name).append("\n")
                     Log.d(TAG, "handlerLowLevelResponseFormat2: ${it.name}")
                 }
-                tvResult.text = sb.toString()
+                binding.tvResult.text = sb.toString()
             } else {
                 Log.d(TAG, "handlerLowLevelResponseFormat2: failed ${response.errorMsg}")
             }

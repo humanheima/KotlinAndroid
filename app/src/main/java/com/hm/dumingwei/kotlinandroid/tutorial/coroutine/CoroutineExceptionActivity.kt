@@ -3,11 +3,19 @@ package com.hm.dumingwei.kotlinandroid.tutorial.coroutine
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
-import com.hm.dumingwei.kotlinandroid.R
-import kotlinx.android.synthetic.main.activity_coroutine_exception.*
-import kotlinx.coroutines.*
+import androidx.appcompat.app.AppCompatActivity
+import com.hm.dumingwei.kotlinandroid.databinding.ActivityCoroutineExceptionBinding
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.launch
 import java.io.Closeable
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
@@ -29,20 +37,23 @@ class CoroutineExceptionActivity : AppCompatActivity() {
         }
     }
 
+    private lateinit var binding: ActivityCoroutineExceptionBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_coroutine_exception)
+        binding = ActivityCoroutineExceptionBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        btnTest1.setOnClickListener {
+        binding.btnTest1.setOnClickListener {
             test1()
         }
-        btnTest2.setOnClickListener {
+        binding.btnTest2.setOnClickListener {
             test2()
         }
-        btnTest3.setOnClickListener {
+        binding.btnTest3.setOnClickListener {
             test3()
         }
-        btnTest4.setOnClickListener { test4() }
+        binding.btnTest4.setOnClickListener { test4() }
     }
 
     private fun test1() {
@@ -113,11 +124,14 @@ interface CoroutineErrorCallback {
     fun onError(throwable: Throwable)
 }
 
-fun uiScope(errorCallback: CoroutineErrorCallback? = null) = SafeCoroutineScope(Dispatchers.Main, errorCallback)
+fun uiScope(errorCallback: CoroutineErrorCallback? = null) =
+    SafeCoroutineScope(Dispatchers.Main, errorCallback)
 
-class SafeCoroutineScope(context: CoroutineContext, errorCallback: CoroutineErrorCallback? = null) : CoroutineScope, Closeable {
+class SafeCoroutineScope(context: CoroutineContext, errorCallback: CoroutineErrorCallback? = null) :
+    CoroutineScope, Closeable {
 
-    override val coroutineContext: CoroutineContext = SupervisorJob() + context + UncaughtCoroutineExceptionHandler(errorCallback)
+    override val coroutineContext: CoroutineContext =
+        SupervisorJob() + context + UncaughtCoroutineExceptionHandler(errorCallback)
 
     override fun close() {
         coroutineContext.cancelChildren()
@@ -125,7 +139,7 @@ class SafeCoroutineScope(context: CoroutineContext, errorCallback: CoroutineErro
 }
 
 class UncaughtCoroutineExceptionHandler(val errorCallback: CoroutineErrorCallback? = null) :
-        CoroutineExceptionHandler, AbstractCoroutineContextElement(CoroutineExceptionHandler.Key) {
+    CoroutineExceptionHandler, AbstractCoroutineContextElement(CoroutineExceptionHandler.Key) {
 
     override fun handleException(context: CoroutineContext, exception: Throwable) {
         exception.printStackTrace()

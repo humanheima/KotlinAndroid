@@ -24,8 +24,8 @@ abstract class BaseMaybeObserver<T> : DisposableMaybeObserver<T>() {
         mAppContext = App.instance
     }
 
-    override fun onSuccess(data: T) {
-        onMaybeSuccess(data)
+    override fun onSuccess(t: T & Any) {
+        onMaybeSuccess(t)
     }
 
     abstract fun onMaybeSuccess(data: T)

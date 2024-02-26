@@ -7,8 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.hm.dumingwei.kotlinandroid.R
-import kotlinx.android.synthetic.main.activity_kotlin_dsl.*
+import com.hm.dumingwei.kotlinandroid.databinding.ActivityKotlinDslBinding
 
 /**
  * Created by dumingwei on 2020/5/12
@@ -27,11 +26,14 @@ class KotlinDSLActivity : AppCompatActivity() {
         }
     }
 
+    private lateinit var binding: ActivityKotlinDslBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_kotlin_dsl)
+        binding = ActivityKotlinDslBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        etFirst.addTextChangedListener(object : TextWatcher {
+        binding.etFirst.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
 
@@ -42,12 +44,11 @@ class KotlinDSLActivity : AppCompatActivity() {
             }
         })
 
-        etSecond.onTextChange {
+        binding.etSecond.onTextChange {
             afterTextChanged {
                 Log.d(TAG, "onCreate: $it")
             }
         }
-
 
         val list = mutableListOf(1, 2, 3, 4)
 

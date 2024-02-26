@@ -2,11 +2,9 @@ package com.hm.dumingwei.kotlinandroid.testbase
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import com.hm.dumingwei.kotlinandroid.R
+import com.hm.dumingwei.kotlinandroid.databinding.ActivityFirstWidgetBinding
 
-class FirstWidgetActivity : BaseWidgetActivity() {
+class FirstWidgetActivity : BaseWidgetActivity<ActivityFirstWidgetBinding>() {
 
     companion object {
 
@@ -16,6 +14,9 @@ class FirstWidgetActivity : BaseWidgetActivity() {
         }
     }
 
-    override fun getLayoutId(): Int = R.layout.activity_first_widget
+
+    override fun createBinding(): ActivityFirstWidgetBinding {
+        return ActivityFirstWidgetBinding.inflate(layoutInflater)
+    }
 
 }

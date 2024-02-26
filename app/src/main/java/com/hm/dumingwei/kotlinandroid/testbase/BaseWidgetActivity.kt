@@ -1,10 +1,12 @@
 package com.hm.dumingwei.kotlinandroid.testbase
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_first_widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.viewbinding.ViewBinding
+import com.hm.dumingwei.kotlinandroid.R
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -13,19 +15,21 @@ import kotlinx.coroutines.launch
  * Desc:
  * 测试 子类中的控件是否可以直接在父类中使用
  */
-abstract class BaseWidgetActivity : AppCompatActivity() {
+abstract class BaseWidgetActivity<T : ViewBinding> : AppCompatActivity() {
 
+    private lateinit var binding: T
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(getLayoutId())
+        binding = createBinding()
+        setContentView(binding.root)
         init()
         main()
     }
 
-    abstract fun getLayoutId(): Int
+    abstract fun createBinding(): T
 
     private fun init() {
-        tvWidget.setOnClickListener {
+        binding.root.findViewById<TextView>(R.id.tvWidget).setOnClickListener {
             if (this@BaseWidgetActivity is FirstWidgetActivity) {
                 Toast.makeText(this, "FirstWidgetActivity", Toast.LENGTH_SHORT).show()
             } else {

@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_exception_test.*
+import com.hm.dumingwei.kotlinandroid.databinding.ActivityExceptionTestBinding
 import kotlinx.coroutines.*
 
 /**
@@ -28,32 +28,35 @@ class ExceptionTestActivity : AppCompatActivity() {
         }
     }
 
+    private lateinit var binding: ActivityExceptionTestBinding
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_exception_test)
 
-        btnTest1.setOnClickListener {
+        binding = ActivityExceptionTestBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
+        binding.btnTest1.setOnClickListener {
             test1()
         }
 
-        btnTest1Revolution.setOnClickListener {
+        binding.btnTest1Revolution.setOnClickListener {
             test1Revolution()
         }
 
-        btnTest2.setOnClickListener {
+        binding.btnTest2.setOnClickListener {
             test2()
         }
 
-        btnTest2Revolution.setOnClickListener {
+        binding.btnTest2Revolution.setOnClickListener {
             test2Revolution()
         }
 
-        btnTestParentJob.setOnClickListener {
+        binding.btnTestParentJob.setOnClickListener {
             testParentJob()
         }
 
-        btnTestAsyncThrow.setOnClickListener {
+        binding.btnTestAsyncThrow.setOnClickListener {
             testAsyncBlockThrow()
         }
     }

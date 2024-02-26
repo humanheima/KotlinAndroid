@@ -5,13 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_async_exception_test.btnTest1
-import kotlinx.android.synthetic.main.activity_async_exception_test.btnTest2
-import kotlinx.android.synthetic.main.activity_async_exception_test.btnTest3
-import kotlinx.android.synthetic.main.activity_async_exception_test.btnTest4
-import kotlinx.android.synthetic.main.activity_async_exception_test.btnTest5
-import kotlinx.android.synthetic.main.activity_async_exception_test.btnTestAsync1
-import kotlinx.android.synthetic.main.activity_async_exception_test.btnTestOthers
+import com.hm.dumingwei.kotlinandroid.databinding.ActivityAsyncExceptionTestBinding
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -50,32 +44,35 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
         }
     }
 
+    private lateinit var binding: ActivityAsyncExceptionTestBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_async_exception_test)
+        binding = ActivityAsyncExceptionTestBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        btnTestOthers.setOnClickListener {
+        binding.btnTestOthers.setOnClickListener {
         }
-        btnTest1.setOnClickListener {
+        binding.btnTest1.setOnClickListener {
             test()
         }
 
-        btnTestAsync1.setOnClickListener {
+        binding.btnTestAsync1.setOnClickListener {
             asyncAsRootCoroutine1()
         }
 
-        btnTest2.setOnClickListener {
+        binding.btnTest2.setOnClickListener {
             //testExpHandler()
             test2()
         }
 
-        btnTest3.setOnClickListener {
+        binding.btnTest3.setOnClickListener {
             testExpHandler()
         }
-        btnTest4.setOnClickListener {
+        binding.btnTest4.setOnClickListener {
             test4()
         }
-        btnTest5.setOnClickListener {
+        binding.btnTest5.setOnClickListener {
             test5()
         }
 
