@@ -3,9 +3,9 @@ package com.hm.dumingwei.temp
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.hm.dumingwei.DialogPriorityManager
 import com.hm.dumingwei.Priority
 import com.hm.dumingwei.kotlinandroid.R
@@ -28,35 +28,59 @@ class DialogPriorityTestActivity : AppCompatActivity() {
         }
     }
 
+    val anonymousFunction = fun(x: Int, y: Int): Int {
+        return x + y
+    }
+
+    fun test(action: (Int, Int) -> Int) {
+        println(action(1, 2))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dialog_priority_test)
-
-        Log.i(TAG, "onCreate: ${DialogPriorityManager.hasHigherShowing(Priority.NO_LOGIN_4000_COIN_DIALOG)}")
-        Log.i(TAG, "onCreate: ${DialogPriorityManager.sparseArray.size()}")
-        Log.i(TAG, "onCreate: ${DialogPriorityManager.sparseArray}")
+        //println(anonymousFunction(1, 2))
+        test(anonymousFunction)
+//        Log.i(TAG, "onCreate: ${DialogPriorityManager.hasHigherShowing(Priority.NO_LOGIN_4000_COIN_DIALOG)}")
+//        Log.i(TAG, "onCreate: ${DialogPriorityManager.sparseArray.size()}")
+//        Log.i(TAG, "onCreate: ${DialogPriorityManager.sparseArray}")
     }
 
     fun onClick(view: View) {
         when (view.id) {
             R.id.bnt_test1 -> {
                 DialogPriorityManager.setShowing(Priority.NOVEL_TOP_GUIDE_DIALOG, true)
-                Log.i(TAG, "onCreate: ${DialogPriorityManager.hasHigherShowing(Priority.NO_LOGIN_4000_COIN_DIALOG)}")
+                Log.i(
+                    TAG,
+                    "onCreate: ${DialogPriorityManager.hasHigherShowing(Priority.NO_LOGIN_4000_COIN_DIALOG)}"
+                )
             }
+
             R.id.bnt_test2 -> {
                 DialogPriorityManager.setShowing(Priority.NOVEL_TOP_GUIDE_DIALOG, false)
-                Log.i(TAG, "onCreate: ${DialogPriorityManager.hasHigherShowing(Priority.NO_LOGIN_4000_COIN_DIALOG)}")
+                Log.i(
+                    TAG,
+                    "onCreate: ${DialogPriorityManager.hasHigherShowing(Priority.NO_LOGIN_4000_COIN_DIALOG)}"
+                )
             }
+
             R.id.bnt_test3 -> {
                 DialogPriorityManager.setShowing(Priority.NOVEL_GUIDE_DIALOG, true)
                 DialogPriorityManager.setShowing(Priority.NOVEL_TOP_GUIDE_DIALOG, true)
 
-                Log.i(TAG, "onCreate: ${DialogPriorityManager.hasHigherShowing(Priority.NO_LOGIN_4000_COIN_DIALOG)}")
+                Log.i(
+                    TAG,
+                    "onCreate: ${DialogPriorityManager.hasHigherShowing(Priority.NO_LOGIN_4000_COIN_DIALOG)}"
+                )
             }
+
             R.id.bnt_test4 -> {
                 DialogPriorityManager.setShowing(Priority.NOVEL_GUIDE_DIALOG, false)
                 DialogPriorityManager.setShowing(Priority.NOVEL_TOP_GUIDE_DIALOG, false)
-                Log.i(TAG, "onCreate: ${DialogPriorityManager.hasHigherShowing(Priority.NO_LOGIN_4000_COIN_DIALOG)}")
+                Log.i(
+                    TAG,
+                    "onCreate: ${DialogPriorityManager.hasHigherShowing(Priority.NO_LOGIN_4000_COIN_DIALOG)}"
+                )
             }
         }
     }

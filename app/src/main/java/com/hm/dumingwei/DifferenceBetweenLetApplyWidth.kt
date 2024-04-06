@@ -27,6 +27,7 @@ fun testRepeat() {
 }
 
 fun testLet() {
+    val string:String?=null
     "Hello".let {
         //注释1处
         println(it.length)

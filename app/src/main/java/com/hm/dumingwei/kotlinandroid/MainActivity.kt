@@ -21,11 +21,23 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private fun runExtension(receiver: String, block: String.(number: Int, number1: Int) -> Unit) {
+        receiver.block(2, 3)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+
+        val myExtension: String.(number: Int, number1: Int) -> Unit = { number, number1 ->
+            Log.i(TAG, "onCreate: $this $number $number1")
+            //println(number)
+            //println(number1)
+        }
+        runExtension("Hello, World!", myExtension)
 
         binding.btnBaseCoroutine.withTrigger().onClick {
             CoroutineBaseActivity.launch(this)
