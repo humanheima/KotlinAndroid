@@ -402,3 +402,6 @@ public final class JsonModel {
 这种声明类型是不合适的，将可以不为null的Java基本数据类型，变为了可空的包装类型，使用的时候会增加空判断的逻辑。
 
 
+
+
+

@@ -12,6 +12,12 @@
             android:orientation="vertical">
 
         <Button
+                android:id="@+id/btnPreventClick"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/kotlin_prevent_repeat_click" />
+
+        <Button
                 android:id="@+id/btnBaseCoroutine"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -88,12 +94,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/retrofit"
                 android:textAllCaps="false" />
-
-        <Button
-                android:id="@+id/btnPreventClick"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/kotlin_prevent_repeat_click" />
 
         <!--使用Coroutine做-->
         <Button

@@ -1,12 +1,25 @@
 package com.hm.dumingwei.temp
 
+import android.util.Log
+
 
 class Test {
+
+    private val TAG = "Temp"
+
     fun test() {
         val anonymousFunction = fun(x: Int, y: Int): Int {
             return x + y
         }
         println(anonymousFunction(1, 2))
+    }
+
+
+    fun testRange() {
+        val lastPosition = 10
+        for (i in lastPosition downTo 0) {
+            Log.d(TAG, "testRange: i = $i")
+        }
     }
 
 }
