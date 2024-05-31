@@ -7,17 +7,9 @@ package com.hm.dumingwei.kotlinandroid
  */
 
 data class JsonModel(
-        var show: Boolean,
-        var number: Int,
-        var string: String?
-)
-
-
-data class JsonModel2(
-        var show: Boolean,
-        var number: Int,
-        var string: String?,
-        var jsonModel: JsonModel
+    var show: Boolean = true,
+    var number: Int = 2,
+    var string: String? = "default"
 )
 
 

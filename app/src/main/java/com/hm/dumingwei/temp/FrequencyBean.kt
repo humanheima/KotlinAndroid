@@ -5,7 +5,7 @@ package com.hm.dumingwei.temp
  * Desc: 发送频率限制
  */
 data class FrequencyBean(
-    var chatFrequencyMillisecond: Long = 2000,
+    var chatFrequencyMillisecond: Long,
     var chatFrequencyTips: String? = "default value"
 ) {
 }

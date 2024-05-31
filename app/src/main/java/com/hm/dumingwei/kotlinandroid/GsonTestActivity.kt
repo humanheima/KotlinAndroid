@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.hm.dumingwei.JsonUtilKt
 import com.hm.dumingwei.kotlinandroid.databinding.ActivityGsonTestBinding
+import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.JsonModel2
 
 /**
  * Created by dumingwei on 2021/10/28
@@ -73,13 +74,11 @@ class GsonTestActivity : AppCompatActivity(), View.OnClickListener {
 
             R.id.btnTest1 -> {
                 //字段都有
-                val jsonString = "{\"show\": \"true\",\"number\": 10086,\"string\":\"hello world\"}"
+                val jsonString = "{\"show\": \"false\",\"number\": 10086,\"string\":\"hello world\"}"
 
                 val model = JsonUtilKt.instance.toObject(jsonString, JsonModel::class.java)
 
                 Log.i(TAG, "onClick: mode = $model")
-
-
             }
 
             R.id.btnTest2 -> {
@@ -104,20 +103,11 @@ class GsonTestActivity : AppCompatActivity(), View.OnClickListener {
 
                 Log.i(TAG, "onClick: 缺少一个引用类型变量：mode = $model")
 
-                Log.i(TAG, "onClick: 缺少一个引用类型变量：mode.string = ${model?.string}")
-
                 //引用类型变量为null
                 val jsonString1 = "{\"show\": \"true\"," + "\"number\": \"10086\",\"string\":null}"
 
                 val model1 = JsonUtilKt.instance.toObject(jsonString1, JsonModel::class.java)
                 Log.i(TAG, "onClick: 引用类型变量为null：mode = $model1")
-                Log.i(TAG, "onClick: 引用类型变量为null：mode.string = ${model1?.string}")
-                if (model1 != null) {
-                    Log.i(
-                        TAG,
-                        "onClick: 引用类型变量为null：mode.string.length = ${model1.string?.length}"
-                    )
-                }
 
             }
 

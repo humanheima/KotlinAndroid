@@ -3,9 +3,9 @@
 ### JsonModel类所有字段都声明为非空类型
 ```kotlin
 data class JsonModel(
-        var show: Boolean,
-        var number: Int,
-        var string: String
+    var show: Boolean,
+    var number: Int,
+    var string: String
 )
 ```
 
@@ -27,44 +27,44 @@ fun <T> toObject(json: String?, classOfT: Class<T>): T? {
 ```java
 public final class JsonModel {
 
-   private boolean show;
-   private int number;
-   @NotNull
-   private String string;
-   
-   public JsonModel(boolean show, int number, @NotNull String string) {
-         Intrinsics.checkParameterIsNotNull(string, "string");
-         super();
-         this.show = show;
-         this.number = number;
-         this.string = string;
-   }
+    private boolean show;
+    private int number;
+    @NotNull
+    private String string;
 
-   public final boolean getShow() {
-      return this.show;
-   }
+    public JsonModel(boolean show, int number, @NotNull String string) {
+        Intrinsics.checkParameterIsNotNull(string, "string");
+        super();
+        this.show = show;
+        this.number = number;
+        this.string = string;
+    }
 
-   public final void setShow(boolean var1) {
-      this.show = var1;
-   }
+    public final boolean getShow() {
+        return this.show;
+    }
 
-   public final int getNumber() {
-      return this.number;
-   }
+    public final void setShow(boolean var1) {
+        this.show = var1;
+    }
 
-   public final void setNumber(int var1) {
-      this.number = var1;
-   }
+    public final int getNumber() {
+        return this.number;
+    }
 
-   @NotNull
-   public final String getString() {
-      return this.string;
-   }
+    public final void setNumber(int var1) {
+        this.number = var1;
+    }
 
-   public final void setString(@NotNull String var1) {
-      Intrinsics.checkParameterIsNotNull(var1, "<set-?>");
-      this.string = var1;
-   }
+    @NotNull
+    public final String getString() {
+        return this.string;
+    }
+
+    public final void setString(@NotNull String var1) {
+        Intrinsics.checkParameterIsNotNull(var1, "<set-?>");
+        this.string = var1;
+    }
 }
 ```
 
@@ -96,36 +96,36 @@ val jsonString = "{\"string\":\"hello world\"}"
 ReflectiveTypeAdapterFactory.Adapter的read方法。
 
 ```java
-@Override 
+@Override
 public T read(JsonReader in) throws IOException {
-      if (in.peek() == JsonToken.NULL) {
+        if (in.peek() == JsonToken.NULL) {
         in.nextNull();
         return null;
-      }
+        }
 
-      T instance = constructor.construct();
+        T instance = constructor.construct();
 
-      try {
+        try {
         in.beginObject();
         //注释1处，循环判断是否还有下一个值需要处理。
         while (in.hasNext()) {
-          String name = in.nextName();
-          BoundField field = boundFields.get(name);
-          if (field == null || !field.deserialized) {
-            in.skipValue();
-          } else {
-            //注释2处，使用BoundField读字段值
-            field.read(in, instance);
-          }
+        String name = in.nextName();
+        BoundField field = boundFields.get(name);
+        if (field == null || !field.deserialized) {
+        in.skipValue();
+        } else {
+        //注释2处，使用BoundField读字段值
+        field.read(in, instance);
         }
-      } catch (IllegalStateException e) {
+        }
+        } catch (IllegalStateException e) {
         throw new JsonSyntaxException(e);
-      } catch (IllegalAccessException e) {
+        } catch (IllegalAccessException e) {
         throw new AssertionError(e);
-      }
-      in.endObject();
-      return instance;
-}
+        }
+        in.endObject();
+        return instance;
+        }
 ```
 
 注释1处，循环判断是否还有下一个值需要处理。处理完string字段以后，json字符串中就没有其他要处理的字段了，也就是说，在Json字符串没有`show`字段和`number`字段的时候，根本不会处理这两个字段，所以都是默认值，`show = false `，`number = 0 `。
@@ -149,50 +149,53 @@ ReflectiveTypeAdapterFactory.Adapter的read方法的注释2处，使用BoundFiel
 
 ```java
 private ReflectiveTypeAdapterFactory.BoundField createBoundField(
-      final Gson context, final Field field, final String name,
-      final TypeToken<?> fieldType, boolean serialize, boolean deserialize) {
-    final boolean isPrimitive = Primitives.isPrimitive(fieldType.getRawType());
-    // special casing primitives here saves ~5% on Android...
-    JsonAdapter annotation = field.getAnnotation(JsonAdapter.class);
-    TypeAdapter<?> mapped = null;
-    if (annotation != null) {
-      mapped = jsonAdapterFactory.getTypeAdapter(
-          constructorConstructor, context, fieldType, annotation);
-    }
-    final boolean jsonAdapterPresent = mapped != null;
-    if (mapped == null) mapped = context.getAdapter(fieldType);
+final Gson context, final Field field, final String name,
+final TypeToken<?> fieldType, boolean serialize, boolean deserialize) {
+final boolean isPrimitive = Primitives.isPrimitive(fieldType.getRawType());
+        // special casing primitives here saves ~5% on Android...
+        JsonAdapter annotation = field.getAnnotation(JsonAdapter.class);
+        TypeAdapter<?> mapped = null;
+        if (annotation != null) {
+        mapped = jsonAdapterFactory.getTypeAdapter(
+        constructorConstructor, context, fieldType, annotation);
+        }
+final boolean jsonAdapterPresent = mapped != null;
+        if (mapped == null) mapped = context.getAdapter(fieldType);
 
-    final TypeAdapter<?> typeAdapter = mapped;
-    return new ReflectiveTypeAdapterFactory.BoundField(name, serialize, deserialize) {
-      @SuppressWarnings({"unchecked", "rawtypes"}) // the type adapter and field type always agree
-      @Override void write(JsonWriter writer, Object value)
-          throws IOException, IllegalAccessException {
+final TypeAdapter<?> typeAdapter = mapped;
+        return new ReflectiveTypeAdapterFactory.BoundField(name, serialize, deserialize) {
+@SuppressWarnings({"unchecked", "rawtypes"}) // the type adapter and field type always agree
+@Override void write(JsonWriter writer, Object value)
+        throws IOException, IllegalAccessException {
         Object fieldValue = field.get(value);
         TypeAdapter t = jsonAdapterPresent ? typeAdapter
-            : new TypeAdapterRuntimeTypeWrapper(context, typeAdapter, fieldType.getType());
+        : new TypeAdapterRuntimeTypeWrapper(context, typeAdapter, fieldType.getType());
         t.write(writer, fieldValue);
-      }
-      @Override void read(JsonReader reader, Object value)
-          throws IOException, IllegalAccessException {
+        }
+@Override void read(JsonReader reader, Object value)
+        throws IOException, IllegalAccessException {
         //注释1处
         Object fieldValue = typeAdapter.read(reader);
         if (fieldValue != null || !isPrimitive) {
-          //注释2处
-          field.set(value, fieldValue);
+        //注释2处
+        field.set(value, fieldValue);
         }
-      }
-      @Override public boolean writeField(Object value) throws IOException, IllegalAccessException {
+        }
+@Override public boolean writeField(Object value) throws IOException, IllegalAccessException {
         if (!serialized) return false;
         Object fieldValue = field.get(value);
         return fieldValue != value; // avoid recursion for example for Throwable.cause
-      }
-    };
-  }
+        }
+        };
+        }
 ```
 
 注释1处，如果是boolean类型，对应的变量是TypeAdapters.BOOLEAN，如果值为null的话，TypeAdapters.BOOLEAN返回的值是null。如果是int类型，对应的变量是TypeAdapters.INTEGER，如果值为null的话，TypeAdapters.INTEGER返回的值是null。
 
-注释2处，条件不满足，所以Java原始类型变量如果对应的json字符串为null的话，最终反序列化的结果就是默认值，`show = false`，`number = 0`。
+注释2处，条件不满足，所以Java**原始类型变量**如果对应的json字符串为null的话，最终反序列化的结果就是默认值，`show = false`，`number = 0`。
+
+这里注意一下：说明如果是null值，不会赋值给原始数据类型变量。null值是可以赋值给引用类型变量的。
+
 
 ```java
 public static final TypeAdapter<Boolean> BOOLEAN = new TypeAdapter<Boolean>() {
@@ -399,9 +402,117 @@ public final class JsonModel {
 
 2. 如果反序列化的Json字符串`show`字段和`number`字段都为`null`，那么最后反序列化出来的JsonModel对象，`show = null `，`number = null `。
 
-这种声明类型是不合适的，将可以不为null的Java基本数据类型，变为了可空的包装类型，使用的时候会增加空判断的逻辑。
+**这种声明类型是不合适的**，将可以不为null的Java基本数据类型，变为了可空的包装类型，使用的时候会增加空判断的逻辑。
 
 
+### 字段都有默认值的情况
 
+```java
 
+public final class JsonModel {
+   private boolean show;
+   private int number;
+   @Nullable
+   private String string;
 
+   public final boolean getShow() {
+      return this.show;
+   }
+
+   public final void setShow(boolean var1) {
+      this.show = var1;
+   }
+
+   public final int getNumber() {
+      return this.number;
+   }
+
+   public final void setNumber(int var1) {
+      this.number = var1;
+   }
+
+   @Nullable
+   public final String getString() {
+      return this.string;
+   }
+
+   public final void setString(@Nullable String var1) {
+      this.string = var1;
+   }
+
+   public JsonModel(boolean show, int number, @Nullable String string) {
+      this.show = show;
+      this.number = number;
+      this.string = string;
+   }
+
+   // $FF: synthetic method
+   public JsonModel(boolean var1, int var2, String var3, int var4, DefaultConstructorMarker var5) {
+      if ((var4 & 1) != 0) {
+         var1 = true;
+      }
+
+      if ((var4 & 2) != 0) {
+         var2 = 2;
+      }
+
+      if ((var4 & 4) != 0) {
+         var3 = "default";
+      }
+
+      this(var1, var2, var3);
+   }
+
+   public JsonModel() {
+      this(false, 0, (String)null, 7, (DefaultConstructorMarker)null);
+   }
+
+//...
+
+}
+
+```
+
+注意：在都有参数的情况下，会编译出一个无参构造函数。
+
+* json字符串字段都有
+```
+val jsonString = "{\"show\": \"false\",\"number\": 10086,\"string\":\"hello world\"}"
+//输出
+
+JsonModel(show=false, number=10086, string=hello world)
+
+```
+
+* 只有一个引用类型数据
+
+```
+ val jsonString = "{\"string\":\"hello world\"}"
+
+//输出
+JsonModel(show=true, number=2, string=hello world)
+```
+
+* 基本数据类型为null
+
+```
+val jsonString1 = "{\"show\": null,\"number\":null,\"string\":\"hello world\"}"
+//输出
+JsonModel(show=true, number=2, string=hello world)
+```
+
+* 缺少一个引用类型变量
+
+```
+val jsonString = "{\"show\": \"true\"," + "\"number\":10086}"
+//输出
+JsonModel(show=true, number=10086, string=default)
+```
+
+* 引用类型变量为null
+
+```
+val jsonString1 = "{\"show\": \"true\"," + "\"number\": \"10086\",\"string\":null}"
+//输出
+JsonModel(show=true, number=10086, string=null)
+```

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.hm.dumingwei.JsonUtilKt
 import com.hm.dumingwei.kotlinandroid.bytest.PropertiesByActivity
 import com.hm.dumingwei.kotlinandroid.databinding.ActivityMainBinding
 import com.hm.dumingwei.kotlinandroid.findviewbyid.FindViewByIdActivity
@@ -15,7 +14,6 @@ import com.hm.dumingwei.kotlinandroid.testbase.FirstWidgetActivity
 import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.CoroutineBaseActivity
 import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.CoroutineExceptionActivity
 import com.hm.dumingwei.temp.DialogPriorityTestActivity
-import com.hm.dumingwei.temp.FrequencyBean
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,17 +30,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
-        test1()
-        test2()
-        test3()
-
-        Log.e(TAG, "onCreate: 分割线")
-        test4()
-        test5()
-        test6()
-
-
 
         val myExtension: String.(number: Int, number1: Int) -> Unit = { number, number1 ->
             Log.i(TAG, "onCreate: $this $number $number1")
@@ -112,70 +99,6 @@ class MainActivity : AppCompatActivity() {
         binding.btnSuspendFunction.setOnClickListener {
             SuspendFunctionActivity.launch(this)
         }
-    }
-
-    private fun test1() {
-        val frequencyBean = JsonUtilKt.instance.toObject(
-            "{\"chatFrequencyMillisecond\": 1000,\"chatFrequencyTips\": \"too fast\"}",
-            FrequencyBean::class.java
-        )
-
-        //chatFrequencyMillisecond 字段正常有值，onCreate: frequencyBean = FrequencyBean(chatFrequencyMillisecond=1000, chatFrequencyTips=too fast)
-        Log.d(TAG, "onCreate: frequencyBean = $frequencyBean")
-    }
-
-    private fun test2() {
-
-        val frequencyBean = JsonUtilKt.instance.toObject(
-            "{\"chatFrequencyMillisecond\": null,\"chatFrequencyTips\": \"too fast\"}",
-            FrequencyBean::class.java
-        )
-
-        //chatFrequencyMillisecond 字段为 null onCreate: frequencyBean = FrequencyBean(chatFrequencyMillisecond=2000, chatFrequencyTips=too fast)
-        Log.d(TAG, "onCreate: frequencyBean = $frequencyBean")
-    }
-
-    private fun test3() {
-        val frequencyBean = JsonUtilKt.instance.toObject(
-            "{\"chatFrequencyTips\": \"too fast\"}",
-            FrequencyBean::class.java
-        )
-
-        //chatFrequencyMillisecond 没有这个字段，onCreate: frequencyBean = FrequencyBean(chatFrequencyMillisecond=1000, chatFrequencyTips=too fast)
-        Log.d(TAG, "onCreate: frequencyBean = $frequencyBean")
-    }
-
-    private fun test4() {
-        val frequencyBean = JsonUtilKt.instance.toObject(
-            "{\"chatFrequencyMillisecond\": 1000,\"chatFrequencyTips\": \"too fast\"}",
-            FrequencyBean::class.java
-        )
-
-        //chatFrequencyTips 字段正常有值
-        //FrequencyBean(chatFrequencyMillisecond=1000, chatFrequencyTips=too fast)
-        Log.d(TAG, "onCreate: frequencyBean = $frequencyBean")
-    }
-
-    private fun test5() {
-        val frequencyBean = JsonUtilKt.instance.toObject(
-            "{\"chatFrequencyMillisecond\": 1000,\"chatFrequencyTips\": null}",
-            FrequencyBean::class.java
-        )
-
-        //chatFrequencyTips 字段为null
-        //FrequencyBean(chatFrequencyMillisecond=1000, chatFrequencyTips=null)
-        Log.d(TAG, "onCreate: frequencyBean = $frequencyBean")
-    }
-
-    private fun test6() {
-        val frequencyBean = JsonUtilKt.instance.toObject(
-            "{\"chatFrequencyMillisecond\": 1000}",
-            FrequencyBean::class.java
-        )
-
-        //没有 chatFrequencyTips 字段
-        //FrequencyBean(chatFrequencyMillisecond=1000, chatFrequencyTips=default value)
-        Log.d(TAG, "onCreate: frequencyBean = $frequencyBean")
     }
 
     fun onClick(view: View) {
