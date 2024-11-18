@@ -1,128 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btnTestFlow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="测试Flow" />
 
         <Button
-                android:id="@+id/btnPreventClick"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/kotlin_prevent_repeat_click" />
+            android:id="@+id/btnPreventClick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/kotlin_prevent_repeat_click" />
 
         <Button
-                android:id="@+id/btnBaseCoroutine"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/coroutine_base"
-                android:textAllCaps="false" />
+            android:id="@+id/btnBaseCoroutine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/coroutine_base"
+            android:textAllCaps="false" />
 
         <Button
-                android:id="@+id/btnTestPropertiesDelegate"
-                android:layout_width="match_parent"
-                android:onClick="onClick"
-                android:layout_height="wrap_content"
-                android:text="测试属性委托"
-                android:textAllCaps="false" />
+            android:id="@+id/btnTestPropertiesDelegate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:text="测试属性委托"
+            android:textAllCaps="false" />
 
         <Button
-                android:id="@+id/btnTestRemoveMsg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="测试handler 移除消息不成功的原因"
-                android:textAllCaps="false" />
+            android:id="@+id/btnTestRemoveMsg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试handler 移除消息不成功的原因"
+            android:textAllCaps="false" />
 
         <Button
-                android:id="@+id/btnTestDialogPriority"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="测试弹窗优先级"
-                android:textAllCaps="false" />
+            android:id="@+id/btnTestDialogPriority"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试弹窗优先级"
+            android:textAllCaps="false" />
 
         <Button
-                android:id="@+id/btnTestJson"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="测试Json"
-                android:textAllCaps="false" />
+            android:id="@+id/btnTestJson"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试Json"
+            android:textAllCaps="false" />
 
         <Button
-                android:id="@+id/btnRetrofitAndCoroutine"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Retrofit 和 协程"
-                android:textAllCaps="false" />
+            android:id="@+id/btnRetrofitAndCoroutine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Retrofit 和 协程"
+            android:textAllCaps="false" />
 
         <Button
-                android:id="@+id/btnOkHttpVsCoroutine"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="OkHttp 和 协程"
-                android:textAllCaps="false" />
+            android:id="@+id/btnOkHttpVsCoroutine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OkHttp 和 协程"
+            android:textAllCaps="false" />
 
         <Button
-                android:id="@+id/btnAsyncException"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="测试在协程中的Async异常处理"
-                android:textAllCaps="false" />
+            android:id="@+id/btnAsyncException"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试在协程中的Async异常处理"
+            android:textAllCaps="false" />
 
         <Button
-                android:id="@+id/btnException"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="测试在协程中的异常处理"
-                android:textAllCaps="false" />
+            android:id="@+id/btnException"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试在协程中的异常处理"
+            android:textAllCaps="false" />
 
         <Button
-                android:id="@+id/btnTestWidget"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="测试在父类中使用子类布局中声明的控件"
-                android:textAllCaps="false" />
+            android:id="@+id/btnTestWidget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试在父类中使用子类布局中声明的控件"
+            android:textAllCaps="false" />
 
         <Button
-                android:id="@+id/btnRetrofit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/retrofit"
-                android:textAllCaps="false" />
+            android:id="@+id/btnRetrofit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/retrofit"
+            android:textAllCaps="false" />
 
         <!--使用Coroutine做-->
         <Button
-                android:id="@+id/btnCoroutineRequest"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="使用Coroutine请求网络"
-                android:textAllCaps="false" />
+            android:id="@+id/btnCoroutineRequest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="使用Coroutine请求网络"
+            android:textAllCaps="false" />
 
         <Button
-                android:id="@+id/btnFindViewById"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Kotlin findViewById实现原理"
-                android:textAllCaps="false" />
+            android:id="@+id/btnFindViewById"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Kotlin findViewById实现原理"
+            android:textAllCaps="false" />
 
         <Button
-                android:id="@+id/btnExpTest"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="官方文章异常处理学习"
-                android:textAllCaps="false" />
+            android:id="@+id/btnExpTest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="官方文章异常处理学习"
+            android:textAllCaps="false" />
 
         <Button
-                android:id="@+id/btnSuspendFunction"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="测试挂起函数"
-                android:textAllCaps="false" />
+            android:id="@+id/btnSuspendFunction"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试挂起函数"
+            android:textAllCaps="false" />
 
     </LinearLayout>
 

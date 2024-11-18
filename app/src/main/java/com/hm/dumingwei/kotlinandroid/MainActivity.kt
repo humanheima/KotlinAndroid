@@ -38,6 +38,9 @@ class MainActivity : AppCompatActivity() {
         }
         runExtension("Hello, World!", myExtension)
 
+        binding.btnTestFlow.setOnClickListener {
+            FlowTestActivity.launch(this)
+        }
         binding.btnBaseCoroutine.withTrigger().onClick {
             CoroutineBaseActivity.launch(this)
         }
@@ -99,6 +102,11 @@ class MainActivity : AppCompatActivity() {
         binding.btnSuspendFunction.setOnClickListener {
             SuspendFunctionActivity.launch(this)
         }
+
+
+        testReturn()
+        Log.d(TAG, "onCreate: 分割线")
+        testReturn2()
     }
 
     fun onClick(view: View) {
@@ -121,4 +129,42 @@ class MainActivity : AppCompatActivity() {
         if (versionOrHigher(apiVersion)) function() else default()
 
     private fun versionOrHigher(version: Int) = Build.VERSION.SDK_INT >= version
+
+
+    private fun testReturn() {
+        val list = listOf<String?>(null, "1", "22222")
+
+        val success: Boolean = list.any { item ->
+            Log.d(TAG, "testReturn: item = $item")
+            if (item == null) {
+                return@any false
+            } else {
+                item.length > 2
+            }
+        }
+
+        Log.d(TAG, "testReturn: success = $success")
+
+    }
+
+
+    private fun testReturn2() {
+
+        val list = listOf<String?>(null, "1", "22222")
+
+        val success: Boolean = list.any { item ->
+            Log.d(TAG, "testReturn2: item = $item")
+            if (item == null) {
+                return@any false
+            } else {
+                item.length > 2
+
+            }
+        }
+
+        Log.d(TAG, "testReturn2: success = $success")
+
+    }
+
+
 }

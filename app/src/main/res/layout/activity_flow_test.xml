@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".FlowTestActivity">
+
+    <Button
+        android:id="@+id/btnTest1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="创建Flow" />
+
+    <Button
+        android:id="@+id/btnFilterMap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="组合变换" />
+
+    <Button
+        android:id="@+id/btnCombine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="组合多个Flow" />
+
+    <Button
+        android:id="@+id/btnErrorHandle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="错误处理" />
+
+    <Button
+        android:id="@+id/btnStateFlow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="StateFlow 示例" />
+
+    <Button
+        android:id="@+id/btnAddStateFlow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="改变StateFlow" />
+
+    <Button
+        android:id="@+id/btnSharedFlow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="测试SharedFlow" />
+
+    <Button
+        android:id="@+id/btnSendSharedFlowEvent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="发送SharedFlow事件" />
+
+
+</LinearLayout>
