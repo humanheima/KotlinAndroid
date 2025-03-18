@@ -1,5 +1,6 @@
 package com.hm.dumingwei.kotlinandroid.bytest
 
+import android.util.Log
 import kotlin.reflect.KProperty
 
 
@@ -9,14 +10,15 @@ import kotlin.reflect.KProperty
  */
 class Delegate {
 
-    private var mvalue = ""
+    private val TAG = "Delegate"
+    private var mvalue = "默认值"
     operator fun getValue(thisRef: Any?, property: KProperty<*>): String {
-        println("$thisRef, 这里委托了 ${property.name} 属性")
+        Log.d(TAG, "getValue: $thisRef, 这里委托了 ${property.name} 属性")
         return mvalue
     }
 
     operator fun setValue(thisRef: Any?, property: KProperty<*>, value: String) {
-        println("$thisRef 的 ${property.name} 属性赋值为 $value")
+        Log.d(TAG, "setValue: $thisRef 的 ${property.name} 属性赋值为 $value")
         mvalue = value
     }
 }

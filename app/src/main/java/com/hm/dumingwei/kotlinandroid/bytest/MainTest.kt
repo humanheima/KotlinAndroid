@@ -12,8 +12,4 @@ fun main() {
     println(e.p)
 
     println("-----------------")
-
-    println(e.p2)
-    e.p2 = "Mask"
-    println(e.p2)
 }

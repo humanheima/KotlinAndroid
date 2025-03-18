@@ -2,11 +2,12 @@ package com.hm.dumingwei.kotlinandroid.bytest
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.hm.dumingwei.kotlinandroid.R
+import kotlin.properties.Delegates
 
 /**
  * Created by p_dmweidu on 2023/6/28
@@ -34,7 +35,6 @@ class PropertiesByActivity : AppCompatActivity() {
 
     private var user: SharedPreferencesUtils.User? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_properties_by)
@@ -42,10 +42,48 @@ class PropertiesByActivity : AppCompatActivity() {
         UtilSharedPreference.initSharedPreference(this, "sp_file")
 
         user = SharedPreferencesUtils.User(this)
+
+        testNotNullDelegate()
     }
+
+    //属性委托：属性变化时触发回调。
+    var observable: String by Delegates.observable("initial") { prop, old, new ->
+        Log.d(TAG, "onCreate: ${prop.name} changed from $old to $new")
+    }
+
+    /**
+     * 非空委托
+     */
+    fun testNotNullDelegate() {
+        val person = Person()
+
+        // println(person.name) // 错误！未初始化会抛出 IllegalStateException
+
+        person.initName("Alice")
+        println(person.name) // 输出: Alice
+
+        person.name = "Bob"
+        println(person.name) // 输出: Bob
+
+        //person.name = null // 编译错误，类型是 String 而非 String?
+    }
+
+    /**
+     * 可以阻止不符合条件的赋值。新值大于0，才会被赋值。
+     */
+    var vetoable: Int by Delegates.vetoable(0) { _, _, new -> new >= 0 }
+
 
     fun onClick(view: View) {
         when (view.id) {
+            R.id.btn_delegate_sample -> {
+                val example = Example()
+
+                observable = "你好"
+                Log.d(TAG, "onClick: example.name = ${example.p}")
+
+            }
+
             R.id.btn_sp_delegate -> {
                 var newName = name
                 Log.i(TAG, "onClick: newName= $newName")
