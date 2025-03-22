@@ -26,6 +26,12 @@
         android:text="组合多个Flow" />
 
     <Button
+        android:id="@+id/btnZip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="zip多个Flow" />
+
+    <Button
         android:id="@+id/btnErrorHandle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,6 +60,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="发送SharedFlow事件" />
+
+    <Button
+        android:id="@+id/btnSendSharedFlowEventReplay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="测试 SharedFlow Replay 事件" />
 
 
 </LinearLayout>

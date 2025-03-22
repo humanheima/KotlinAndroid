@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.hm.dumingwei.kotlinandroid.databinding.ActivityFlowTestBinding
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
@@ -19,7 +18,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 
 /**
@@ -40,7 +43,6 @@ class FlowTestActivity : AppCompatActivity() {
         }
     }
 
-    @OptIn(InternalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFlowTestBinding.inflate(layoutInflater)
@@ -48,10 +50,11 @@ class FlowTestActivity : AppCompatActivity() {
         setContentView(view)
 
         binding.btnTest1.setOnClickListener {
-            //val flow = simpleFlow()
             val flow = listToFlow()
             lifecycleScope.launch {
-                flow.collect(object : FlowCollector<Int> {
+                flow.onCompletion {
+                    Log.i(TAG, "onCreate: onCompletion")
+                }.collect(object : FlowCollector<Int> {
                     override suspend fun emit(value: Int) {
                         Log.i(TAG, "onCreate: emit $value")
                     }
@@ -60,7 +63,6 @@ class FlowTestActivity : AppCompatActivity() {
         }
 
         binding.btnFilterMap.setOnClickListener {
-            //val flow = transformFlow()
             val flow = transformFlow()
             lifecycleScope.launch {
                 flow.collect(object : FlowCollector<Int> {
@@ -76,15 +78,18 @@ class FlowTestActivity : AppCompatActivity() {
              * Flow1，Flow2，如果其中一个Flow2输出的值少,那么另一个Flow1会继续执行，并以Flow2的最新的值为组合
              */
             val flow = combineFlow(simpleFlow(), simpleFlow1())
-            lifecycleScope.launch {
-                flow.collect(object : FlowCollector<String> {
-                    override suspend fun emit(value: String) {
-                        Log.i(TAG, "onCreate: emit $value")
-                    }
-                })
-            }
+            lifecycleScope.launch { flow.collect { value -> Log.i(TAG, "onCreate: emit $value") } }
         }
 
+        binding.btnZip.setOnClickListener {
+            /**
+             * Flow1，Flow2，如果其中一个Flow2输出的值少,那么另一个Flow1会继续执行，并以Flow2的最新的值为组合
+             */
+            val flow = zipFlow()
+            lifecycleScope.launch {
+                flow.collect { value -> Log.i(TAG, "onCreate: zip $value") }
+            }
+        }
 
         binding.btnErrorHandle.setOnClickListener {
             val flow = safeFlow()
@@ -98,16 +103,12 @@ class FlowTestActivity : AppCompatActivity() {
         }
 
         val counter = Counter()
+        lifecycleScope.launch {
+            counter.count.collect { value -> Log.i(TAG, "onCreate: emit $value") }
+        }
 
         binding.btnStateFlow.setOnClickListener {
-            lifecycleScope.launch {
-
-                counter.count.collect(object : FlowCollector<Int> {
-                    override suspend fun emit(value: Int) {
-                        Log.i(TAG, "onCreate: emit $value")
-                    }
-                })
-            }
+            counter.increment()
         }
 
         binding.btnAddStateFlow.setOnClickListener {
@@ -121,18 +122,17 @@ class FlowTestActivity : AppCompatActivity() {
         }
         val eventBus = EventBus()
 
+
         binding.btnSharedFlow.setOnClickListener {
-
-
-//            repeat(3) { index ->
-//                lifecycleScope.launch {
-//                    eventBus.events.collect(object : FlowCollector<String> {
-//                        override suspend fun emit(value: String) {
-//                            Log.d(TAG, "emit $index: 收到的值 $value ")
-//                        }
-//                    })
-//                }
-//            }
+            repeat(3) { index ->
+                lifecycleScope.launch {
+                    eventBus.events.collect(object : FlowCollector<String> {
+                        override suspend fun emit(value: String) {
+                            Log.d(TAG, "emit $index: 收到的值 $value ")
+                        }
+                    })
+                }
+            }
             // 启动一个协程来收集事件
 //            lifecycleScope.launch {
 //                repeat(3) { index ->
@@ -165,6 +165,16 @@ class FlowTestActivity : AppCompatActivity() {
                 eventBus.sendEvent("Hello")
                 delay(1000) // 延迟 1 秒()
                 eventBus.sendEvent("World")
+            }
+        }
+
+        binding.btnSendSharedFlowEventReplay.setOnClickListener {
+            lifecycleScope.launch {
+                eventBus.events.collect(object : FlowCollector<String> {
+                    override suspend fun emit(value: String) {
+                        Log.d(TAG, "在发射数据之后收集，测试replay : 收到的值 $value ")
+                    }
+                })
             }
         }
     }
@@ -207,6 +217,25 @@ class FlowTestActivity : AppCompatActivity() {
     }
 
 
+    /**
+     * zip，一个flow结束，另一个flow立即结束
+     * 只会输出3个值
+     *
+     *  flow 1    flow2 a
+     *
+     *  flow 2    flow2 b
+     *
+     *  flow 3    flow2 c
+     *
+     */
+    private fun zipFlow(): Flow<String> {
+        val flow = flowOf(1, 2, 3).onEach { delay(1000) }
+        val flow2 = flowOf("a", "b", "c", "d").onEach { delay(15) }
+        return flow.zip<Int, String, String>(flow2) { a, b ->
+            "flow $a    flow2 $b"
+        }
+    }
+
     private fun safeFlow(): Flow<Int> {
         return flow {
             for (i in 1..4) {
@@ -234,7 +263,7 @@ class Counter {
 
 // 创建一个 MutableSharedFlow
 class EventBus {
-    private val _events = MutableSharedFlow<String>() // 私有的可变共享流
+    private val _events = MutableSharedFlow<String>(replay = 2) // 私有的可变共享流
 
     // 发射事件
     suspend fun sendEvent(event: String) {

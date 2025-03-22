@@ -157,10 +157,9 @@ fun View.onClick(time: Long = 600, action: suspend (View) -> Unit) {
             delay(time)
             action(this@onClick)
         }
-
     }
 
     setOnClickListener {
-        eventActor.offer(Unit)
+        eventActor.trySend(Unit)
     }
 }
