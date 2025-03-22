@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
@@ -47,7 +48,8 @@ class FlowTestActivity : AppCompatActivity() {
         setContentView(view)
 
         binding.btnTest1.setOnClickListener {
-            val flow = simpleFlow()
+            //val flow = simpleFlow()
+            val flow = listToFlow()
             lifecycleScope.launch {
                 flow.collect(object : FlowCollector<Int> {
                     override suspend fun emit(value: Int) {
@@ -172,6 +174,15 @@ class FlowTestActivity : AppCompatActivity() {
             emit(i)
             delay(1000L) // 延迟 1 秒()
         }
+
+
+    }
+
+    /**
+     * 将 集合 转换为 Flow
+     */
+    private fun listToFlow(): Flow<Int> {
+        return listOf(1, 2, 3).asFlow()
     }
 
     private fun simpleFlow1(): Flow<Int> = flow {
