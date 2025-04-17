@@ -8,64 +8,81 @@
     tools:context=".FlowTestActivity">
 
     <Button
+        android:id="@+id/btnUpdateFlowValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="更新Flow的值"
+        android:textAllCaps="false" />
+
+    <Button
         android:id="@+id/btnTest1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="创建Flow" />
+        android:text="创建Flow"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnFilterMap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="组合变换" />
+        android:text="组合变换"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnCombine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="组合多个Flow" />
+        android:text="组合多个Flow"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnZip"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="zip多个Flow" />
+        android:text="zip多个Flow"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnErrorHandle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="错误处理" />
+        android:text="错误处理"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnStateFlow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="StateFlow 示例" />
+        android:text="StateFlow 示例"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnAddStateFlow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="改变StateFlow" />
+        android:text="改变StateFlow"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnSharedFlow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="测试SharedFlow" />
+        android:text="测试SharedFlow"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnSendSharedFlowEvent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="发送SharedFlow事件" />
+        android:text="发送SharedFlow事件"
+        android:textAllCaps="false" />
 
     <Button
         android:id="@+id/btnSendSharedFlowEventReplay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="测试 SharedFlow Replay 事件" />
+        android:text="测试 SharedFlow Replay 事件"
+        android:textAllCaps="false" />
 
 
 </LinearLayout>

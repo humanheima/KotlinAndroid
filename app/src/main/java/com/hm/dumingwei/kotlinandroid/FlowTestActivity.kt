@@ -14,9 +14,12 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -33,6 +36,12 @@ class FlowTestActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityFlowTestBinding
 
+
+    /**
+     * 点赞
+     */
+    private val _mLikeFlow by lazy { MutableStateFlow<String?>(null) }
+
     companion object {
 
         private const val TAG = "FlowTestActivity"
@@ -43,11 +52,39 @@ class FlowTestActivity : AppCompatActivity() {
         }
     }
 
+    private val _sharedFlow = MutableSharedFlow<String?>()
+    val sharedFlow = _sharedFlow.asSharedFlow()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFlowTestBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        lifecycleScope.launch {
+            sharedFlow.collect { Log.e(TAG, "onCreate:Received: $it") }
+        }
+
+        lifecycleScope.launch {
+            sharedFlow.filterNotNull().collect { Log.e(TAG, "onCreate:Received2: $it") }
+
+        }
+        lifecycleScope.launch {
+
+            delay(1000)
+            _sharedFlow.emit(null)
+            _sharedFlow.emit("A")
+            _sharedFlow.emit("A") // 重复值
+            _sharedFlow.emit("B")
+        }
+
+        binding.btnUpdateFlowValue.setOnClickListener {
+            lifecycleScope.launch {
+                _sharedFlow.emit("点赞")
+            }
+
+        }
+
 
         binding.btnTest1.setOnClickListener {
             val flow = listToFlow()
@@ -108,6 +145,7 @@ class FlowTestActivity : AppCompatActivity() {
         }
 
         binding.btnStateFlow.setOnClickListener {
+            //相同的值不会发射
             counter.increment()
         }
 
@@ -126,38 +164,9 @@ class FlowTestActivity : AppCompatActivity() {
         binding.btnSharedFlow.setOnClickListener {
             repeat(3) { index ->
                 lifecycleScope.launch {
-                    eventBus.events.collect(object : FlowCollector<String> {
-                        override suspend fun emit(value: String) {
-                            Log.d(TAG, "emit $index: 收到的值 $value ")
-                        }
-                    })
+                    eventBus.events.collect { value -> Log.d(TAG, "emit $index: 收到的值 $value ") }
                 }
             }
-            // 启动一个协程来收集事件
-//            lifecycleScope.launch {
-//                repeat(3) { index ->
-//                    Log.d(TAG, "onCreate: index = $index")
-//                    eventBus.events.collect(object : FlowCollector<String> {
-//                        override suspend fun emit(value: String) {
-//                            Log.d(TAG, "内部repeat emit$index:收到的值  $value ")
-//                        }
-//                    })
-//                }
-//            }
-
-//            lifecycleScope.launch {
-//                eventBus.events.collect(object : FlowCollector<String> {
-//                    override suspend fun emit(value: String) {
-//                        Log.d(TAG, "emit1:  $value ")
-//                    }
-//                })
-//
-//                eventBus.events.collect(object : FlowCollector<String> {
-//                    override suspend fun emit(value: String) {
-//                        Log.d(TAG, "emit2:  $value ")
-//                    }
-//                })
-//            }
         }
 
         binding.btnSendSharedFlowEvent.setOnClickListener {
@@ -179,14 +188,43 @@ class FlowTestActivity : AppCompatActivity() {
         }
     }
 
-    private fun simpleFlow(): Flow<Int> = flow {
-        for (i in 1..10) {
-            emit(i)
-            delay(1000L) // 延迟 1 秒()
+    private fun simpleFlow(): Flow<Int> {
+        val flow = flow<Int> {
+            for (i in 1..10) {
+                emit(i)
+                delay(1000L) // 延迟 1 秒()
+            }
         }
 
-
+        //固定元素个数的flow
+        //flowOf(1,2,3,4)
+        return flow
     }
+
+    /**
+     * channelFlow
+     */
+    val flow = channelFlow {
+        launch {
+            send(1) // 类似 emit，但更适合并发场景
+            delay(100)
+            send(2)
+        }
+    }
+
+    /**
+     * callbackFlow
+     */
+//    val callbackFlow = callbackFlow {
+//        val callback = object : SomeCallback {
+//            override fun onData(data: Int) {
+//                trySend(data) // 发射数据
+//            }
+//        }
+//        registerCallback(callback) // 注册回调
+//        awaitClose { unregisterCallback(callback) } // 清理资源
+//    }
+
 
     /**
      * 将 集合 转换为 Flow
@@ -257,7 +295,7 @@ class Counter {
     val count: StateFlow<Int> get() = _count // 公共只读状态流
 
     fun increment() {
-        _count.value += 1 // 更新状态
+        _count.value += 0 // 更新状态
     }
 }
 
