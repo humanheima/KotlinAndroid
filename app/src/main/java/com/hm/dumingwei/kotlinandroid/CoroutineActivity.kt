@@ -10,7 +10,10 @@ import com.hm.dumingwei.kotlinandroid.databinding.ActivityCoroutineBinding
 import com.hm.dumingwei.mvp.presenter.CoroutinePresenter
 import com.hm.dumingwei.mvp.view.CoroutineView
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 /**
  * Crete by dumingwei on 2019/3/8
@@ -93,6 +96,32 @@ class CoroutineActivity : AppCompatActivity(), View.OnClickListener, CoroutineVi
     override fun onDestroy() {
         presenter.detachView()
         super.onDestroy()
+    }
+
+    private suspend fun methodA() {
+        Log.d(TAG, "methodA: ")
+    }
+
+    private suspend fun methodB() {
+        Log.d(TAG, "methodB: ")
+    }
+
+    private fun test() {
+        GlobalScope.launch {
+            //methodA ， methodB 顺序执行
+            methodA()
+            methodB()
+        }
+    }
+
+    private fun testAsync() {
+        GlobalScope.launch {
+            //methodA ， methodB 并发执行
+            val jobA = async { methodA() }
+            val jobB = async { methodB() }
+            jobA.await()
+            jobB.await()
+        }
     }
 
 }

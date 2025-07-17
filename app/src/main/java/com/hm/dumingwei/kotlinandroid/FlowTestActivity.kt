@@ -5,7 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.hm.dumingwei.kotlinandroid.databinding.ActivityFlowTestBinding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -139,25 +141,9 @@ class FlowTestActivity : AppCompatActivity() {
             }
         }
 
-        val counter = Counter()
-        lifecycleScope.launch {
-            counter.count.collect { value -> Log.i(TAG, "onCreate: emit $value") }
-        }
+        stateFlowTest()
 
-        binding.btnStateFlow.setOnClickListener {
-            //相同的值不会发射
-            counter.increment()
-        }
 
-        binding.btnAddStateFlow.setOnClickListener {
-            lifecycleScope.launch {
-                // 更新计数
-                repeat(5) {
-                    delay(1000) // 每秒增加一次
-                    counter.increment()
-                }
-            }
-        }
         val eventBus = EventBus()
 
 
@@ -186,6 +172,57 @@ class FlowTestActivity : AppCompatActivity() {
                 })
             }
         }
+    }
+
+    private fun stateFlowTest(): Counter {
+        val counter = Counter()
+        lifecycleScope.launch {
+            counter.count.collect { value ->
+                Log.i(
+                    TAG,
+                    "stateFlow 第一个订阅者 onCreate: emit $value"
+                )
+            }
+        }
+        lifecycleScope.launch {
+            counter.count.collect { value ->
+                Log.i(
+                    TAG,
+                    "stateFlow 第二个订阅者 onCreate: emit $value"
+                )
+            }
+        }
+
+        lifecycleScope.launch {
+
+            //只有当 生命周期到达 STARTED 时才会收集才执行。如果从 STARTED 到了 STOPPED 状态的时候，协程会取消。
+            //当再次从 STOPPED 到 STARTED 状态，会重新执行这个协程
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                counter.count.collect { value ->
+                    Log.i(
+                        TAG,
+                        "stateFlow 第三个订阅者 onCreate: emit $value"
+                    )
+                }
+            }
+        }
+
+        binding.btnStateFlow.setOnClickListener {
+            //相同的值不会发射
+            counter.increment()
+        }
+
+        binding.btnAddStateFlow.setOnClickListener {
+            lifecycleScope.launch {
+                // 更新计数
+                repeat(5) {
+                    delay(1000) // 每秒增加一次
+                    counter.increment()
+                }
+            }
+        }
+
+        return counter
     }
 
     private fun simpleFlow(): Flow<Int> {
@@ -295,7 +332,7 @@ class Counter {
     val count: StateFlow<Int> get() = _count // 公共只读状态流
 
     fun increment() {
-        _count.value += 0 // 更新状态
+        _count.value += 1 // 更新状态
     }
 }
 
