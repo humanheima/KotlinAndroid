@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.hm.dumingwei.kotlinandroid.R
+import com.hm.dumingwei.kotlinandroid.databinding.ActivityPropertiesByBinding
 import kotlin.properties.Delegates
 
 /**
@@ -33,17 +34,39 @@ class PropertiesByActivity : AppCompatActivity() {
      */
     private var name: String by UtilSharedPreference("name", "默认值")
 
-    private var user: SharedPreferencesUtils.User? = null
+    private val settings by lazy { UserSettings(this) }
+
+    private lateinit var binding: ActivityPropertiesByBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_properties_by)
+
+        binding = ActivityPropertiesByBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         //初始化sp
         UtilSharedPreference.initSharedPreference(this, "sp_file")
 
-        user = SharedPreferencesUtils.User(this)
-
         testNotNullDelegate()
+
+        binding.btnSpDelegate3.setOnClickListener {
+
+            // 写入 SharedPreferences
+            settings.userName = "Alice"
+            settings.userAge = 25
+            settings.isDarkMode = true
+
+            // 读取 SharedPreferences
+            Log.d(TAG, "onCreate: User Name: ${settings.userName}") // 输出: Alice
+            Log.d(TAG, "onCreate: User Age: ${settings.userAge}")
+            Log.d(TAG, "onCreate: Dark Mode: ${settings.isDarkMode}")
+
+            // 尝试写入空值会编译错误
+            // settings.userName = null // 编译错误：Null can not be a value of a non-null type String
+
+        }
+
+
     }
 
     //属性委托：属性变化时触发回调。
@@ -92,13 +115,6 @@ class PropertiesByActivity : AppCompatActivity() {
                 Log.i(TAG, "onClick: newName= $newName")
             }
 
-            R.id.btn_sp_delegate2 -> {
-                user?.name = "你好"
-                user?.phone = 124
-
-                Log.i(TAG, "onClick: user?.name =${user?.name} user?.phone = ${user?.phone}")
-
-            }
         }
 
     }

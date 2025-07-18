@@ -87,17 +87,17 @@ class AsyncExceptionTestActivity : AppCompatActivity() {
      * async 不是用作根协程，所以其中 async代码块中的异常捕获不住
      */
     private fun test() {
+         val scope = MainScope()
+
         scope.launch {
             Log.d(TAG, "test: launch${coroutineContext}")
+            val response: Deferred<String> = async {
+                Log.d(TAG, "test: in async block")
+                throw IllegalStateException("an IllegalStateException")
+            }
             try {
-                val response: Deferred<String> = async {
-                    Log.d(TAG, "test: in async block")
-                    throw IllegalStateException("an IllegalStateException")
-                }
                 response.await()
             } catch (e: Exception) {
-                // async 中抛出的异常将不会在这里被捕获
-                // 但是异常会被传播和传递到 scope，这里能够打印出来
                 Log.d(TAG, "catch test: error ${e.message}")
             }
         }

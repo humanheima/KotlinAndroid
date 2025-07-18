@@ -5,8 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.hm.dumingwei.kotlinandroid.databinding.ActivityExceptionTestBinding
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 
 /**
  * Created by dumingwei on 2020/9/21
@@ -38,6 +46,7 @@ class ExceptionTestActivity : AppCompatActivity() {
 
         binding.btnTest1.setOnClickListener {
             test1()
+            //test0()
         }
 
         binding.btnTest1Revolution.setOnClickListener {
@@ -58,6 +67,33 @@ class ExceptionTestActivity : AppCompatActivity() {
 
         binding.btnTestAsyncThrow.setOnClickListener {
             testAsyncBlockThrow()
+        }
+    }
+
+    private fun test0() {
+
+        //这样，异常捕获不了
+        lifecycleScope.launch {
+            try {
+                launch {
+                    delay(100)
+                    throw IllegalStateException("Child1 failed")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "test0: " + e.message)
+            }
+
+
+            //异常可以捕获
+            launch {
+                try {
+                    delay(100)
+                    throw IllegalStateException("Child1 failed")
+                } catch (e: Exception) {
+                    Log.e(TAG, "test0: " + e.message)
+
+                }
+            }
         }
     }
 
@@ -198,23 +234,16 @@ class ExceptionTestActivity : AppCompatActivity() {
         val scope = CoroutineScope(SupervisorJob())
 
         scope.launch {
-            coroutineScope {
-                try {
-                    val deferred = async {
-                        codeThatCanThrowExceptions()
-                    }
-                    //deferred.await()
-                } catch (e: Exception) {
-                    // Exception thrown in async WILL NOT be caught here
-                    // but propagated up to the scope
+            try {
+                val deferred = async {
+                    throw java.lang.IllegalStateException("codeThatCanThrowExceptions")
                 }
+                // TODO: 如果不调用 await，async代码块中是否会抛出异常，没有人处理，最终导致crash
+                deferred.await()
+            } catch (e: Exception) {
+                Log.e(TAG, "testAsyncBlockThrow: ")
             }
         }
-
-    }
-
-    private fun codeThatCanThrowExceptions() {
-        throw  java.lang.IllegalStateException("codeThatCanThrowExceptions")
     }
 
 

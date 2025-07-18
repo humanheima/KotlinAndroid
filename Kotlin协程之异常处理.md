@@ -10,7 +10,7 @@
 
 协程构建器有两种类型：自动传播异常([launch](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/launch.html) 和 [actor](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.channels/actor.html))或者将异常暴露给用户([async](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/async.html) 和 [produce](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.channels/produce.html))。当使用这两种构建器构建根协程的时候，前一种类型的构建器将异常视为未捕获的异常，类似Java的`Thread.uncaughtExceptionHandler`。后一种类型的构建器则依赖用户来消费异常，例如通过 [await](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-deferred/await.html) or [receive](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.channels/-receive-channel/receive.html)。
 
-举个例子，我们使用 [GlobalScope](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-global-scope/index.html)来创建根协程。
+举个例子，我们使用 [GlobalScope](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-global-scope/index.html)来创建根协程。
 
 ```kotlin
 private fun main() = runBlocking {
@@ -55,13 +55,13 @@ Caught ArithmeticException
 
 ## 协程异常处理器
 
-我们可以自定义将未捕获的异常输出到控制台的默认行为。 根协程的 [CoroutineExceptionHandler](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-coroutine-exception-handler/index.html) 这个上下文元素可以用来作为根协程及其子协程的通用的`catch`块，然后在其中自定义异常处理。和 [`Thread.uncaughtExceptionHandler`](https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html#setUncaughtExceptionHandler(java.lang.Thread.UncaughtExceptionHandler)) 类似，在CoroutineExceptionHandler中，你不能从异常中恢复。当CoroutineExceptionHandler被调用的时候，协程已经以异常结束了。通常来说 CoroutineExceptionHandler 被用来打印异常，展示某些类型的错误信息，终止和/或重启应用。
+我们可以自定义将未捕获的异常输出到控制台的默认行为。根协程的 [CoroutineExceptionHandler](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-coroutine-exception-handler/index.html) 这个上下文元素可以用来作为根协程及其子协程的通用的`catch`块，然后在其中自定义异常处理。和 [`Thread.uncaughtExceptionHandler`](https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html#setUncaughtExceptionHandler(java.lang.Thread.UncaughtExceptionHandler)) 类似，在CoroutineExceptionHandler中，你不能从异常中恢复。当CoroutineExceptionHandler被调用的时候，协程已经以异常结束了。通常来说 CoroutineExceptionHandler 被用来打印异常，展示某些类型的错误信息，终止和/或重启应用。
 
-在JVM平台上，可通过 [`ServiceLoader`](https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html) 来为所有的协程注册一个全局的 [CoroutineExceptionHandler](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-coroutine-exception-handler/index.html)。 全局的异常处理器和 [`Thread.defaultUncaughtExceptionHandler`](https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html#setDefaultUncaughtExceptionHandler(java.lang.Thread.UncaughtExceptionHandler)) 类似，在没有更多指定的异常处理者被注册的时候被使用。在Android平台上，`uncaughtExceptionPreHandler `被用作全局的协程异常处理器。
+在JVM平台上，可通过 [`ServiceLoader`](https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html) 来为所有的协程注册一个全局的[CoroutineExceptionHandler](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-coroutine-exception-handler/index.html)。 全局的异常处理器和 [`Thread.defaultUncaughtExceptionHandler`](https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html#setDefaultUncaughtExceptionHandler(java.lang.Thread.UncaughtExceptionHandler)) 类似，在没有更多指定的异常处理者被注册的时候被使用。在Android平台上，`uncaughtExceptionPreHandler `被用作全局的协程异常处理器。
 
-CoroutineExceptionHandler仅在未捕获的异常出现的时候调用。特别是，所有子协程都将异常的处理委托给其父协程，父协程也会委托给父协程，以此类推，直到根协程为止，因此子协程永远不会使用在其上下文中安装的CoroutineExceptionHandler。除此之外，[async](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/async.html) 构建器总是捕获所有的异常并且使用返回的 [Deferred](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-deferred/index.html) 来表示异常，所以CoroutineExceptionHandler对async也不起作用。
+CoroutineExceptionHandler仅在未捕获的异常出现的时候调用。特别是，所有子协程都将异常的处理委托给其父协程，父协程也会委托给父协程，以此类推，直到根协程为止，因此子协程永远不会使用在其上下文中安装的CoroutineExceptionHandler。除此之外，[async](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/async.html) 构建器总是捕获所有的异常并且使用返回的[Deferred](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-deferred/index.html) 来表示异常，所以CoroutineExceptionHandler对async也不起作用。
 
-注意：在监督作用域中运行的协程不会讲异常传播到父协程。所以上述规则不适用。更多的细节请参考 [Supervision](https://github.com/Kotlin/kotlinx.coroutines/blob/master/docs/exception-handling.md#supervision) 相关章节。
+注意：在监督作用域中运行的协程不会讲异常传播到父协程。所以上述规则不适用。更多的细节请参考 [Supervision](https://github.com/Kotlin/kotlinx.coroutines/blob/master/docs/exception-handling.md#supervision)相关章节。
 
 ```kotlin
 fun main() = runBlocking {
@@ -125,10 +125,10 @@ Cancelling child
 Child is cancelled
 Parent is not cancelled
 ```
-使用Job.cance取消子协程，但是父协程没有被取消。
+使用Job.cancel 取消子协程，但是父协程没有被取消。
 
 
-如果一个协程遇到了CancellationException之外的异常，那么它会以该异常取消父协程。该行为不能被覆盖，该行为为 [structured concurrency](https://github.com/Kotlin/kotlinx.coroutines/blob/master/docs/composing-suspending-functions.md#structured-concurrency-with-async) 提供了稳定的协程层级结构。CoroutineExceptionHandler的实现并不是用于子协程的。
+如果一个协程遇到了CancellationException之外的异常，那么它会以该异常取消父协程。该行为不能被覆盖，该行为为[structured concurrency](https://github.com/Kotlin/kotlinx.coroutines/blob/master/docs/composing-suspending-functions.md#structured-concurrency-with-async) 提供了稳定的协程层级结构。CoroutineExceptionHandler的实现并不是用于子协程的。
 
 在上面的例子中，CoroutineExceptionHandler总是用于使用GlobalScope创建的协程。对于在`runBlocking`的作用域中启动的协程来说，使用CoroutineExceptionHandler是没有意义的，因为对于主协程来说，即使子协程设置了CoroutineExceptionHandler，当他的子协程异常终止的时候，主协程总是被取消。
 
@@ -361,7 +361,7 @@ Caught assertion error
 
 ### 监督协程中的异常
 
-普通的 [Job](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-job/index.html) 和监督作业的另一个关键区别是异常处理。监督作业中的每个子协程都应该自己处理异常。这是因为监督作业中子协程的失败不会传播到父协程。这意味着，在 [supervisorScope](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/supervisor-scope.html) 中直接启动的子协程和使用 [GlobalScope](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-global-scope/index.html) 创建的根协程一样都会使用在他们自己作用域内设置的 [CoroutineExceptionHandler](https://github.com/Kotlin/kotlinx.coroutines/blob/master/docs/exception-handling.md#coroutineexceptionhandler) 来处理异常。
+普通的[Job](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-job/index.html) 和监督作业的另一个关键区别是异常处理。监督作业中的每个子协程都应该自己处理异常。这是因为监督作业中子协程的失败不会传播到父协程。这意味着，在 [supervisorScope](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/supervisor-scope.html) 中直接启动的子协程和使用 [GlobalScope](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/-global-scope/index.html) 创建的根协程一样都会使用在他们自己作用域内设置的 [CoroutineExceptionHandler](https://github.com/Kotlin/kotlinx.coroutines/blob/master/docs/exception-handling.md#coroutineexceptionhandler) 来处理异常。
 
 ```kotlin
 private fun main() = runBlocking {

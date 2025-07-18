@@ -14,6 +14,8 @@ class UtilSharedPreference<T>(private val key: String, private val default: T) {
 
         lateinit var sp: SharedPreferences
 
+
+
         fun initSharedPreference(context: Context, fileName: String) {
             sp = context.getSharedPreferences(fileName, Context.MODE_PRIVATE)
         }

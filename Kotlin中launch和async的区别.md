@@ -5,6 +5,12 @@ implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.2.1'
 ```
 launch和async是CoroutineScope的扩展函数。launch和async很像Java中的`Runnable`和`Callable`。
 
+
+总结
+用 launch 当你只需要执行任务而不需要结果。
+用 async 当你需要异步计算并获取结果。 选择哪种方式取决于你的具体需求：是否需要返回值以及如何处理协程的结果和异常。
+
+
 ### CoroutineScope.launch
 
 启动一个协程，不会阻塞当前线程，返回一个`Job`对象。可以调用`Job`的cancel方法取消协程。

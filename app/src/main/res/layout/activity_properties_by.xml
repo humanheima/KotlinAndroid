@@ -23,11 +23,11 @@
         android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/btn_sp_delegate2"
+        android:id="@+id/btn_sp_delegate3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="onClick"
-        android:text="SharedPreference 委托，另一种实现方式"
+        android:text="SharedPreference 委托，最新的方式"
         android:textAllCaps="false" />
 
 </LinearLayout>
