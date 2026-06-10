@@ -45,6 +45,8 @@
         <activity android:name=".handbook.thirteen.GithubEventActivity" />
         <activity android:name=".tutorial.coroutine.CoroutineBaseActivity" />
         <activity android:name=".CoroutineRetrofitNetActivity" />
+        <activity android:name="com.hm.dumingwei.mvvm.MvvmCounterActivity" />
+        <activity android:name="com.hm.dumingwei.mvi.MviCounterActivity" />
     </application>
 
 </manifest>

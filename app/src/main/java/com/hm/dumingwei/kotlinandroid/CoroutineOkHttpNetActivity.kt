@@ -112,7 +112,7 @@ class CoroutineOkHttpNetActivity : AppCompatActivity(), CoroutineScope by MainSc
             val response = client.newCall(request1).awaitResponse()
             //注释3处
             val string = getString(response)
-            //合并两次请求的结果更新UI
+            //更新UI
             binding.tvResult.text = "协程请求 onResponse: $string"
         }
     }
