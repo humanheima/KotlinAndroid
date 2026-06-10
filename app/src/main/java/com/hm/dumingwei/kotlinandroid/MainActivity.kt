@@ -12,7 +12,6 @@ import com.hm.dumingwei.kotlinandroid.handbook.eleven.SecondActivity
 import com.hm.dumingwei.kotlinandroid.handbook.thirteen.GithubEventActivity
 import com.hm.dumingwei.kotlinandroid.testbase.FirstWidgetActivity
 import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.CoroutineBaseActivity
-import com.hm.dumingwei.kotlinandroid.tutorial.coroutine.CoroutineExceptionActivity
 import com.hm.dumingwei.temp.DialogPriorityTestActivity
 
 class MainActivity : AppCompatActivity() {
@@ -69,7 +68,7 @@ class MainActivity : AppCompatActivity() {
             AsyncExceptionTestActivity.launch(this)
         }
         binding.btnException.setOnClickListener {
-            CoroutineExceptionActivity.launch(this)
+            ExceptionTestActivity.launch(this)
         }
 
         binding.btnRetrofit.withTrigger().click {

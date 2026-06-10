@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.hm.dumingwei.kotlinandroid.databinding.ActivityExceptionTestBinding
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -15,6 +16,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Created by dumingwei on 2020/9/21
@@ -22,6 +24,7 @@ import kotlinx.coroutines.supervisorScope
  * Desc: 这篇文章的测试例子
  * https://mp.weixin.qq.com/s?__biz=MzAwODY4OTk2Mg==&mid=2652060229&idx=1&sn=38b67881237ee411645c42248b9be2d4&chksm=808c9a00b7fb131624f169dc3c2b958e44980ab7118e97539b3ec42611fe3d1e72a277e1bad5&scene=178#rd}
  *
+ * 参考  Kotlin协程异常处理.md
  */
 class ExceptionTestActivity : AppCompatActivity() {
 
@@ -44,9 +47,12 @@ class ExceptionTestActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        binding.btnTest0.setOnClickListener {
+            test0()
+        }
+
         binding.btnTest1.setOnClickListener {
             test1()
-            //test0()
         }
 
         binding.btnTest1Revolution.setOnClickListener {
@@ -71,18 +77,19 @@ class ExceptionTestActivity : AppCompatActivity() {
     }
 
     private fun test0() {
-
-        //这样，异常捕获不了
         lifecycleScope.launch {
-            try {
-                launch {
-                    delay(100)
-                    throw IllegalStateException("Child1 failed")
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "test0: " + e.message)
-            }
-
+            /**
+             * 在外层 launch {} 外围 try/catch）捕获不到内层 launch {} 的异常；
+             * 因为子协程异步执行，异常不会回到那段同步的 try/catch。
+             */
+//            try {
+//                launch {
+//                    delay(100)
+//                    throw IllegalStateException("Child1 failed")
+//                }
+//            } catch (e: Exception) {
+//                Log.e(TAG, "test0: " + e.message)
+//            }
 
             //异常可以捕获
             launch {
@@ -91,7 +98,7 @@ class ExceptionTestActivity : AppCompatActivity() {
                     throw IllegalStateException("Child1 failed")
                 } catch (e: Exception) {
                     Log.e(TAG, "test0: " + e.message)
-
+                    toastSHortly("抓住了异常，test0,${e.message}")
                 }
             }
         }
@@ -99,19 +106,22 @@ class ExceptionTestActivity : AppCompatActivity() {
 
     /**
      * 使用监督任务，在这个示例中如果 Child 1 失败了，无论是 scope 还是 Child 2 都会被取消。
+     *
+     * SupervisorJob 阻止的是「异常导致兄弟协程被取消」，但不阻止「未处理异常导致 App 崩溃」。
+     * 要让 test1 不崩，必须额外提供异常处理：要么每个子协程自己 try/catch（即 test1Revolution），要么给 scope 装一个 CoroutineExceptionHandler。
      */
     private fun test1() {
         val scope = CoroutineScope(SupervisorJob())
 
         scope.launch {
             // Child 1
-            delay(100)
+            delay(100.milliseconds)
             throw IllegalStateException("Child1 failed")
         }
 
         scope.launch {
             // Child 2
-            delay(2000)
+            delay(2000.milliseconds)
 
             Log.e(TAG, "test1: Child finished")
         }
@@ -148,7 +158,7 @@ class ExceptionTestActivity : AppCompatActivity() {
     private fun test2() {
         val scope = CoroutineScope(Job())
 
-        scope.launch() {
+        scope.launch {
 
             supervisorScope {
                 launch {
@@ -168,26 +178,27 @@ class ExceptionTestActivity : AppCompatActivity() {
     }
 
     /**
-     * 使用监督作用域，解决方案，每个子协程自己处理异常
+     * 使用监督作用域，对比版：让 Child 1 真的失败（异常未被自己捕获），
+     * 通过 CoroutineExceptionHandler 处理它，从而体现 supervisorScope 的隔离作用：
+     * Child 1 失败既不会让 App crash，也不会取消兄弟协程 Child 2，Child 2 依然完成。
      */
     private fun test2Revolution() {
+        val handler = CoroutineExceptionHandler { _, e ->
+            Log.e(TAG, "test2: handler caught ${e.message}")
+        }
         val scope = CoroutineScope(Job())
 
         scope.launch {
 
             supervisorScope {
-                launch {
-                    // Child 1
-                    try {
-                        delay(100)
-                        throw IllegalStateException("Child1 failed")
-                    } catch (e: Exception) {
-                        Log.e(TAG, "test2: caught exception ${e.message}")
-                    }
+                launch(handler) {
+                    // Child 1 失败，但被 handler 处理，且不影响 Child 2
+                    delay(100)
+                    throw IllegalStateException("Child1 failed")
                 }
 
                 launch {
-                    // Child 2
+                    // Child 2 依然完成 —— 这才体现 supervisorScope 的隔离作用
                     delay(2000)
 
                     Log.e(TAG, "test2: Child2 finished")
@@ -205,7 +216,7 @@ class ExceptionTestActivity : AppCompatActivity() {
     private fun testParentJob() {
         val scope = CoroutineScope(Job())
 
-        val job = scope.launch(SupervisorJob()) {
+        scope.launch(SupervisorJob()) {
             launch {
                 // Child 1
                 delay(100)
@@ -222,7 +233,7 @@ class ExceptionTestActivity : AppCompatActivity() {
                 Log.e(TAG, "testParentJob: Child finished")
             }
 
-            Log.e(TAG, "testParentJob: parent$isActive")
+            Log.e(TAG, "testParentJob: parent isActive = $isActive")
 
         }
     }

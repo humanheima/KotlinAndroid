@@ -7,6 +7,13 @@
         tools:context=".ExceptionTestActivity">
 
     <Button
+            android:id="@+id/btnTest0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="test0"
+            android:textAllCaps="false" />
+
+    <Button
             android:id="@+id/btnTest1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
