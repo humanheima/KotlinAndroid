@@ -12,7 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".FlowTestActivity"
+            android:name=".SharedFlowTestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".StateFlowTestActivity"
             android:exported="false" />
         <activity
             android:name=".bytest.PropertiesByActivity"

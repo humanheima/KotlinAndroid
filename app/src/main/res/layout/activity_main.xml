@@ -14,7 +14,15 @@
             android:id="@+id/btnTestFlow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="测试Flow" />
+            android:textAllCaps="false"
+            android:text="测试SharedFlow" />
+
+        <Button
+            android:id="@+id/btnTestStateFlow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="测试StateFlow"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/btnPreventClick"

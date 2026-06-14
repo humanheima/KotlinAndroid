@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SharedFlowTestActivity">
+    tools:context=".StateFlowTestActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="SharedFlow 是通用热流：可广播给多个订阅者、不去重、是否粘性由 replay 决定。适合一次性事件。"
+            android:text="StateFlow 始终持有最新值，新订阅者会立即收到当前值，相同的值不会重复发射。"
             android:textSize="14sp" />
 
         <View
@@ -27,37 +27,41 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="一、非粘性事件流（replay = 0）"
+            android:text="计数 StateFlow"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btnSubscribe"
+        <TextView
+            android:id="@+id/tvCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="注册一个订阅者"
+            android:gravity="center"
+            android:text="count = 0"
+            android:textColor="#1565C0"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnIncrement"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="increment（+1）"
             android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btnSendEvent"
+            android:id="@+id/btnSameValue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="发送事件（广播给所有活跃订阅者）"
+            android:text="发射相同的值（去重，不会通知）"
             android:textAllCaps="false" />
 
         <Button
-            android:id="@+id/btnSendDuplicate"
+            android:id="@+id/btnAutoIncrement"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="连发两个相同事件（验证不去重）"
-            android:textAllCaps="false" />
-
-        <Button
-            android:id="@+id/btnLateSubscribe"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="先发事件→再注册订阅者（验证非粘性，收不到旧事件）"
+            android:text="自动 +1（每秒一次，共 5 次）"
             android:textAllCaps="false" />
 
         <View
@@ -70,23 +74,27 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="二、粘性事件流（replay = 2）"
+            android:text="网络状态 StateFlow（必须有初始值）"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btnSendReplayEvent"
+        <TextView
+            android:id="@+id/tvNetworkStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="向 replay=2 的流发送事件"
-            android:textAllCaps="false" />
+            android:gravity="center"
+            android:text="未连接"
+            android:textColor="#C62828"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <Button
-            android:id="@+id/btnLateSubscribeReplay"
+            android:id="@+id/btnToggleNetwork"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="注册迟到订阅者（验证粘性，收到最近 2 个旧事件）"
+            android:layout_marginTop="8dp"
+            android:text="切换网络连接状态"
             android:textAllCaps="false" />
 
         <View
@@ -96,12 +104,12 @@
             android:layout_marginBottom="12dp"
             android:background="#DDDDDD" />
 
-        <Button
-            android:id="@+id/btnClearLog"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="清空日志"
-            android:textAllCaps="false" />
+            android:text="多订阅者收集日志（也会输出到 Logcat，TAG=StateFlowTest）"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvLog"

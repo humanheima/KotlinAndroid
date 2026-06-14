@@ -38,7 +38,10 @@ class MainActivity : AppCompatActivity() {
         runExtension("Hello, World!", myExtension)
 
         binding.btnTestFlow.setOnClickListener {
-            FlowTestActivity.launch(this)
+            SharedFlowTestActivity.launch(this)
+        }
+        binding.btnTestStateFlow.setOnClickListener {
+            StateFlowTestActivity.launch(this)
         }
         binding.btnBaseCoroutine.withTrigger().onClick {
             CoroutineBaseActivity.launch(this)
